@@ -3,7 +3,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { auth, db } from "../../utils/firebase/firebase.config";
+import { auth, db } from "../utils/firebase/firebase.config";
 
 const useUser = () => {
 	const [user, setUser] = useState<User | null>(null);

@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import Spinner from "../components/Spinner";
-import useUser from "./hooks/useUser";
+import useUser from "../hooks/useUser";
 
 const Onboarding: NextPage = () => {
 	const { user, isLoading } = useUser();
