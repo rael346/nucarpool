@@ -1,6 +1,5 @@
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { Feature } from "geojson";
-import React from "react";
 import { UserInfo } from "../types";
 
 const toFeatures = (uid: string, data: QuerySnapshot<DocumentData>) => {

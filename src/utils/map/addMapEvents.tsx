@@ -41,7 +41,7 @@ const addMapEvents = (map: Map, userData: UserInfo) => {
 		const root = createRoot(popupNode);
 		root.render(<CustomPopUp {...properties} />);
 
-		new Popup({ className: "custom-popup-container" })
+		new Popup({ closeButton: false, maxWidth: "75%" })
 			.setLngLat(e.lngLat)
 			.setDOMContent(popupNode)
 			.addTo(map);

@@ -1,5 +1,5 @@
 import { Feature } from "geojson";
-import { GeoJSONSource, Map } from "mapbox-gl";
+import { Map } from "mapbox-gl";
 /**
  * Filter Expression: https://docs.mapbox.com/mapbox-gl-js/style-spec/expressions/
  * Clusters example with filter expression: https://docs.mapbox.com/mapbox-gl-js/example/cluster-html/
@@ -67,17 +67,17 @@ const addClusters = (map: Map, features: Feature[]) => {
 				"case",
 				[
 					"all",
-					["==", ["get", "status"], "active"],
-					["==", ["get", "rdStatus"], "rider"],
+					["==", ["get", "status"], "active"], // active user
+					["==", ["get", "rdStatus"], "rider"], // also a rider
 				],
-				"#11b4da",
+				"#0ea5e9", // blue-ish color
 				[
 					"all",
-					["==", ["get", "status"], "active"],
-					["==", ["get", "rdStatus"], "driver"],
+					["==", ["get", "status"], "active"], // active user
+					["==", ["get", "rdStatus"], "driver"], // also a driver
 				],
-				"#FF4D4D",
-				"#808080",
+				"#f97316", // red-ish color
+				"#808080", // gray for inactive user
 			],
 			"circle-radius": 10,
 			"circle-stroke-width": 2,

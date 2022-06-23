@@ -1,32 +1,17 @@
-import type { NextPage } from "next";
-import { toast } from "react-toastify";
-import Spinner from "../components/Spinner";
-import useUser from "./hooks/useUser";
-import mapboxgl, { GeoJSONSource } from "mapbox-gl";
-import { useEffect, useState } from "react";
-import {
-	query,
-	collection,
-	doc,
-	DocumentData,
-	getDocs,
-	QuerySnapshot,
-} from "firebase/firestore";
-import { auth, db } from "../utils/firebase/firebase.config";
-import {
-	useFirestoreDocument,
-	useFirestoreDocumentData,
-	useFirestoreQuery,
-	useFirestoreQueryData,
-} from "@react-query-firebase/firestore";
-import { UserInfo } from "../utils/types";
-import addUserLocation from "../utils/map/addUserLocation";
-import addMapEvents from "../utils/map/addMapEvents";
-import { RiFocus3Line } from "react-icons/ri";
+import { useFirestoreQuery } from "@react-query-firebase/firestore";
+import { collection, query } from "firebase/firestore";
+import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Feature } from "geojson";
+import type { NextPage } from "next";
+import { useEffect, useState } from "react";
+import { RiFocus3Line } from "react-icons/ri";
+import Spinner from "../components/Spinner";
+import { db } from "../utils/firebase/firebase.config";
 import addClusters from "../utils/map/addClusters";
+import addMapEvents from "../utils/map/addMapEvents";
+import addUserLocation from "../utils/map/addUserLocation";
 import toFeatures from "../utils/map/toFeatures";
+import useUser from "./hooks/useUser";
 
 export const getServerSideProps = async () => {
 	return {
