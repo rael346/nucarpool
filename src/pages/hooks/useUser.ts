@@ -3,11 +3,13 @@ import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { auth, db } from "../utils/firebase/firebase.config";
+import { auth, db } from "../../utils/firebase/firebase.config";
+import { UserInfo } from "../../utils/types";
 
 const useUser = () => {
 	const [user, setUser] = useState<User | null>(null);
-	const [isLoading, setLoading] = useState(true);
+	const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+	const [checkingStatus, setStatus] = useState(true);
 	const isMounted = useRef(true);
 	const { pathname, push } = useRouter();
 
@@ -25,6 +27,7 @@ const useUser = () => {
 							push("/");
 						} else {
 							setUser(user);
+							setUserInfo(docSnap.data() as UserInfo);
 						}
 					} catch (error) {
 						console.log(error);
@@ -33,7 +36,7 @@ const useUser = () => {
 				} else if (pathname != "/auth") {
 					push("/auth");
 				}
-				setLoading(false);
+				setStatus(false);
 			});
 		}
 
@@ -42,7 +45,7 @@ const useUser = () => {
 		};
 	}, [isMounted, pathname, push]);
 
-	return { user, isLoading };
+	return { user, userInfo, checkingStatus };
 };
 
 export default useUser;
