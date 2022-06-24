@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import GoogleOAuth from "../components/GoogleOAuth";
 import Header from "../components/Header";
 import Spinner from "../components/Spinner";
-import useUser from "./hooks/useUser";
+import useUser from "../hooks/useUser";
 
 const Auth: NextPage = () => {
 	const { checkingStatus } = useUser();

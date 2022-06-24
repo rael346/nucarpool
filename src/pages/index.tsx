@@ -13,7 +13,7 @@ import addClusters from "../utils/map/addClusters";
 import addMapEvents from "../utils/map/addMapEvents";
 import addUserLocation from "../utils/map/addUserLocation";
 import toFeatures from "../utils/map/toFeatures";
-import useUser from "./hooks/useUser";
+import useUser from "../hooks/useUser";
 
 export const getServerSideProps = async () => {
 	return {

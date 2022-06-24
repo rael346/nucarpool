@@ -14,14 +14,14 @@ import Spinner from "../components/Spinner";
 import { db } from "../utils/firebase/firebase.config";
 import { OnboardingFormInputs } from "../utils/types";
 import { onboardSchema } from "../utils/zodSchema";
-import useUser from "./hooks/useUser";
+import useUser from "../hooks/useUser";
 
 const Onboarding: NextPage = () => {
 	const { user, checkingStatus } = useUser();
 	const router = useRouter();
 	const {
 		register,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 		watch,
 		handleSubmit,
 	} = useForm<OnboardingFormInputs>({
