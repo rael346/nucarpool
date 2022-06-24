@@ -7,6 +7,16 @@ export type OnboardingFormInputs = {
 	companyAddress: string;
 };
 
+export type ProfileFormInputs = {
+	firstName: string;
+	lastName: string;
+	rdStatus: "rider" | "driver";
+	seatsAvailability: number;
+	companyName: string;
+	companyAddress: string;
+	status: "active" | "inactive";
+};
+
 export type UserInfo = {
 	firstName: string;
 	lastName: string;

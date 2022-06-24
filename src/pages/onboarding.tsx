@@ -236,7 +236,7 @@ const Onboarding: NextPage = () => {
 					</div>
 
 					<button
-						// type="submit"
+						type="submit"
 						className="w-full bg-northeastern-red hover:bg-red-800 rounded-md text-white px-3 py-2 shadow"
 					>
 						Submit

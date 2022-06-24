@@ -1,10 +1,12 @@
+import { Dialog, Transition } from "@headlessui/react";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
 import { collection, query } from "firebase/firestore";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import type { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { RiFocus3Line } from "react-icons/ri";
+import ProfileModal from "../components/ProfileModal";
 import Spinner from "../components/Spinner";
 import { db } from "../utils/firebase/firebase.config";
 import addClusters from "../utils/map/addClusters";
@@ -54,6 +56,7 @@ const Home: NextPage<any> = ({ accessToken }) => {
 	}
 	return (
 		<>
+			<ProfileModal userInfo={userInfo!} user={user!} />
 			<button
 				className="flex justify-center items-center w-8 h-8 absolute z-10 right-[8px] bottom-[150px] rounded-md bg-white border-2 border-solid border-gray-300 shadow-sm hover:bg-gray-200"
 				id="fly"
