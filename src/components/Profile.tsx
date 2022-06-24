@@ -16,6 +16,13 @@ import {
 } from "../utils/types";
 import { profileSchema } from "../utils/zodSchema";
 
+/**
+ * Note: this page is very similar to /onboarding, with small
+ * difference in fields (an additional 'status' field) and the
+ * onSubmit event.
+ * TODO: abstract Profile and Onboarding
+ */
+
 const Profile: React.FC<{ userInfo: UserInfo; user: User }> = ({
 	userInfo,
 	user,

@@ -7,6 +7,13 @@ import { auth } from "../utils/firebase/firebase.config";
 import { UserInfo } from "../utils/types";
 import Profile from "./Profile";
 
+/**
+ * Note: integrating Firebase authentication with react-query is messy
+ * and not plausible for this app because of the login flow (auth -> onboarding -> home)
+ * In the future, using a database other than Firestore will give us the flexibility needed
+ * to integrate with react-query and remove the need to pass down props.
+ */
+
 const ProfileModal: React.FC<{ userInfo: UserInfo; user: User }> = ({
 	userInfo,
 	user,
