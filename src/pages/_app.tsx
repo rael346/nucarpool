@@ -2,15 +2,19 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { withTRPC } from "@trpc/next";
+import { AppRouter } from "../server/router";
+import { NextPageWithAuthAndLayout } from "../utils/types";
+import { SessionProvider, signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-function MyApp({ Component, pageProps }: AppProps) {
-	const queryClient = new QueryClient();
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	return (
-		<QueryClientProvider client={queryClient}>
+		<SessionProvider session={session} refetchOnWindowFocus={false}>
 			<Component {...pageProps} />
 			<ToastContainer />
-		</QueryClientProvider>
+		</SessionProvider>
 	);
 }
 
