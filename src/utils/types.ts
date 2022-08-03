@@ -1,12 +1,3 @@
-export type OnboardingFormInputs = {
-	firstName: string;
-	lastName: string;
-	rdStatus: "rider" | "driver";
-	seatsAvailability: number;
-	companyName: string;
-	companyAddress: string;
-};
-
 export type ProfileFormInputs = {
 	firstName: string;
 	lastName: string;

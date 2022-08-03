@@ -10,14 +10,32 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
 import Spinner from "../components/Spinner";
-import {
-	NextPageWithAuthAndLayout,
-	OnboardingFormInputs,
-} from "../utils/types";
-import { onboardSchema } from "../utils/zodSchema";
 import { unstable_getServerSession as getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Head from "next/head";
+import { z } from "zod";
+import { trpc } from "../utils/trpc";
+import { Role, Status } from "@prisma/client";
+import { TextField } from "../components/TextField";
+
+type OnboardingFormInputs = {
+	role: Role;
+	seatAvail: number;
+	companyName: string;
+	companyAddress: string;
+	startLocation: string;
+};
+
+export const onboardSchema = z.object({
+	role: z.nativeEnum(Role),
+	seatAvail: z
+		.number({ invalid_type_error: "Cannot be empty" })
+		.int("Must be an integer")
+		.nonnegative("Must be greater or equal to 0"),
+	companyName: z.string().min(1, "Cannot be empty"),
+	companyAddress: z.string().min(1, "Cannot be empty"),
+	startLocation: z.string().min(1, "Cannot be empty"),
+});
 
 const Onboard: NextPage = () => {
 	const router = useRouter();
@@ -29,12 +47,11 @@ const Onboard: NextPage = () => {
 	} = useForm<OnboardingFormInputs>({
 		mode: "onBlur",
 		defaultValues: {
-			firstName: "",
-			lastName: "",
-			rdStatus: "rider",
-			seatsAvailability: 0,
+			role: Role.RIDER,
+			seatAvail: 0,
 			companyName: "",
 			companyAddress: "",
+			startLocation: "",
 		},
 		resolver: zodResolver(onboardSchema),
 	});
@@ -45,34 +62,75 @@ const Onboard: NextPage = () => {
 	const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		try {
 			const results: FeatureCollection = await axios
-				.post("/api/geocoding", { value: e.target.value })
+				.post("/api/geocoding", {
+					value: e.target.value,
+					types: "address%2Cpostcode",
+					proximity: "ip",
+					country: "us",
+					autocomplete: "true",
+				})
 				.then((res) => res.data);
 			setSuggestions(results.features);
 		} catch (error) {
-			toast.error(
-				"Error fetching autocomplete options. See console for details."
-			);
-			console.error(error);
+			toast.error(`Something went wrong: ${error}`);
 		}
 	};
 
-	const onSubmit = async (values: OnboardingFormInputs) => {
+	const [startLocationsuggestions, setStartLocationSuggestions] = useState<
+		Feature[]
+	>([]);
+	const [startLocationSelected, setStartLocationSelected] = useState({
+		place_name: "",
+	});
+
+	const handleStartLocationChange = async (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
 		try {
-			const coord = (selected as any).center;
-
-			const userInfo = {
-				...values,
-				companyCoord: coord,
-				// email: user!.email,
-				seatsAvailability:
-					values.rdStatus === "rider" ? 0 : values.seatsAvailability,
-				status: "active",
-			};
-
-			router.push("/");
+			const results: FeatureCollection = await axios
+				.post("/api/geocoding", {
+					value: e.target.value,
+					types: "neighborhood%2Cplace",
+					proximity: "ip",
+					country: "us",
+					autocomplete: "true",
+				})
+				.then((res) => res.data);
+			setStartLocationSuggestions(results.features);
 		} catch (error) {
-			console.log(error);
+			toast.error(`Something went wrong: ${error}`);
 		}
+	};
+
+	const editUserMutation = trpc.useMutation("user.edit", {
+		onSuccess: () => {
+			router.push("/");
+		},
+		onError: (error) => {
+			toast.error(`Something went wrong: ${error.message}`);
+		},
+	});
+
+	const onSubmit = async (values: OnboardingFormInputs) => {
+		const coord: number[] = (selected as any).center;
+		const userInfo = {
+			...values,
+			companyCoordLng: coord[0],
+			companyCoordLat: coord[1],
+			seatAvail: values.role === Role.RIDER ? 0 : values.seatAvail,
+		};
+
+		editUserMutation.mutate({
+			role: userInfo.role,
+			status: Status.ACTIVE,
+			seatAvail: userInfo.seatAvail,
+			companyName: userInfo.companyName,
+			companyAddress: userInfo.companyAddress,
+			companyCoordLng: userInfo.companyCoordLng!,
+			companyCoordLat: userInfo.companyCoordLat!,
+			startLocation: userInfo.startLocation,
+			isOnboarded: true,
+		});
 	};
 
 	return (
@@ -82,113 +140,55 @@ const Onboard: NextPage = () => {
 			</Head>
 
 			<div className="flex h-screen items-center justify-center bg-gray-100">
-				<div className="rounded-2xl w-fit bg-white flex flex-col justify-center items-center p-6 m-4 space-y-4 drop-shadow-lg">
+				<div className="rounded-2xl bg-white flex flex-col justify-center items-center p-6 m-4 space-y-4 drop-shadow-lg">
 					<Header />
-					<h1 className="font-bold text-2xl mb-4">Personal Info</h1>
+					<h1 className="font-bold text-2xl mb-4">Onboard - Profile</h1>
 					<form
-						className="flex flex-col space-y-4"
+						className="w-full flex flex-col space-y-4"
 						onSubmit={handleSubmit(onSubmit)}
 					>
-						<div className="flex flex-row space-x-4">
-							<div className="flex flex-col space-y-2">
-								<label htmlFor="firstName" className="font-medium text-xm">
-									First Name
-								</label>
-								<input
-									id="firstName"
-									className={`w-full  shadow-sm rounded-md px-3 py-2 ${
-										errors.firstName ? "border-red-500" : "border-gray-300"
-									}`}
-									type="text"
-									{...register("firstName")}
-								/>
-								{errors.firstName && (
-									<p className="text-red-500 text-sm mt-2">
-										{errors?.firstName?.message}
-									</p>
-								)}
-							</div>
-
-							<div className="flex flex-col space-y-2">
-								<label htmlFor="lastName" className="font-medium text-xm">
-									Last Name
-								</label>
-								<input
-									id="lastName"
-									className={`w-full  shadow-sm rounded-md px-3 py-2 ${
-										errors.lastName ? "border-red-500" : "border-gray-300"
-									}`}
-									type="text"
-									{...register("lastName")}
-								/>
-								{errors.lastName && (
-									<p className="text-red-500 text-sm mt-2">
-										{errors?.lastName?.message}
-									</p>
-								)}
-							</div>
-						</div>
-
 						<div className="flex flex-col space-y-2">
-							<label htmlFor="rdStatus" className="font-medium text-xm">
-								Rider/Driver Status
+							<label htmlFor="rdStatus" className="font-medium text-sm">
+								Role
 							</label>
 							<select
 								id="rdStatus"
 								className="border-gray-300 shadow-sm rounded-md px-3 py-2"
-								{...register("rdStatus")}
+								{...register("role")}
 							>
-								<option value={"rider"}>Rider</option>
-								<option value={"driver"}>Driver</option>
+								<option value={Role.RIDER}>Rider</option>
+								<option value={Role.DRIVER}>Driver</option>
 							</select>
 						</div>
 
-						{watch("rdStatus") == "driver" && (
-							<div className="flex flex-col space-y-2">
-								<label htmlFor="seatsAvail" className="font-medium text-xm">
-									Seats Availability
-								</label>
-								<input
-									id="seatsAvail"
-									className={`shadow-sm rounded-md px-3 py-2 ${
-										errors.seatsAvailability
-											? "border-red-500"
-											: "border-gray-300"
-									}`}
-									type="number"
-									{...register("seatsAvailability", { valueAsNumber: true })}
-								/>
-								{errors.seatsAvailability && (
-									<p className="text-red-500 text-sm mt-2">
-										{errors?.seatsAvailability?.message}
-									</p>
-								)}
-							</div>
+						{watch("role") == Role.DRIVER && (
+							<TextField
+								label="Seat Availability"
+								id="seatAvail"
+								error={errors.seatAvail}
+								type="number"
+								{...register("seatAvail", { valueAsNumber: true })}
+							/>
 						)}
 
-						<div className="flex flex-col space-y-2">
-							<label htmlFor="companyName" className="font-medium text-xm">
-								Company Name
-							</label>
-							<input
-								id="companyName"
-								className={`w-full shadow-sm rounded-md px-3 py-2 ${
-									errors.companyName ? "border-red-500" : "border-gray-300"
-								}`}
-								type="text"
-								{...register("companyName")}
-							/>
-							{errors.companyName && (
-								<p className="text-red-500 text-sm mt-2">
-									{errors?.companyName?.message}
-								</p>
-							)}
-						</div>
+						<TextField
+							label="Company Name"
+							id="companyName"
+							error={errors.companyName}
+							type="text"
+							{...register("companyName")}
+						/>
+
+						{/* Company Address field  */}
 
 						<div className="flex flex-col space-y-2">
-							<label htmlFor="companyAddress" className="font-medium text-xm">
+							<label htmlFor="companyAddress" className="font-medium text-sm">
 								Company Address
 							</label>
+							<p className="font-light text-xs text-gray-500">
+								Note: Select the autocomplete results, even if you typed the
+								address out
+							</p>
 							<Combobox value={selected} onChange={setSelected}>
 								<Combobox.Input
 									className={`w-full shadow-sm rounded-md px-3 py-2 ${
@@ -235,6 +235,70 @@ const Onboard: NextPage = () => {
 							{errors.companyAddress && (
 								<p className="text-red-500 text-sm mt-2">
 									{errors?.companyAddress?.message}
+								</p>
+							)}
+						</div>
+
+						{/* Starting Location field  */}
+
+						<div className="flex flex-col space-y-2">
+							<label htmlFor="startlocation" className="font-medium text-sm">
+								Starting Location
+							</label>
+							<p className="font-light text-xs text-gray-500">
+								Note: Enter the neighborhood that you want to go from, and
+								select the autocomplete results, even if you typed the address
+								out
+							</p>
+							<Combobox
+								value={startLocationSelected}
+								onChange={setStartLocationSelected}
+							>
+								<Combobox.Input
+									className={`w-full shadow-sm rounded-md px-3 py-2 ${
+										errors.startLocation ? "border-red-500" : "border-gray-300"
+									}`}
+									displayValue={(feat: any) =>
+										feat.place_name ? feat.place_name : ""
+									}
+									type="text"
+									{...register("startLocation")}
+									onChange={debounce(handleStartLocationChange, 500)}
+								/>
+								<Transition
+									as={Fragment}
+									leave="transition ease-in duration-100"
+									leaveFrom="opacity-100"
+									leaveTo="opacity-0"
+								>
+									<Combobox.Options className="w-full rounded-md bg-white text-base shadow-lg focus:outline-none ">
+										{startLocationsuggestions.length === 0 ? (
+											<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+												Nothing found.
+											</div>
+										) : (
+											startLocationsuggestions.map((feat: any) => (
+												<Combobox.Option
+													key={feat.id}
+													className={({ active }) =>
+														`max-w-fit relative cursor-default select-none p-3 ${
+															active
+																? "bg-blue-400 text-white"
+																: "text-gray-900"
+														}`
+													}
+													value={feat}
+												>
+													{feat.place_name}
+												</Combobox.Option>
+											))
+										)}
+									</Combobox.Options>
+								</Transition>
+							</Combobox>
+							{errors.startLocation && (
+								<p className="text-red-500 text-sm mt-2">
+									{errors?.startLocation?.message}
 								</p>
 							)}
 						</div>

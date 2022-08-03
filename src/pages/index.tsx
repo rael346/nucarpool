@@ -9,8 +9,6 @@ import Spinner from "../components/Spinner";
 import addClusters from "../utils/map/addClusters";
 import addMapEvents from "../utils/map/addMapEvents";
 import addUserLocation from "../utils/map/addUserLocation";
-import toFeatures from "../utils/map/toFeatures";
-import { NextPageWithAuthAndLayout } from "../utils/types";
 import { unstable_getServerSession as getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Head from "next/head";
