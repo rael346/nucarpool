@@ -50,19 +50,22 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(cuid())
-  name           String?
-  email          String?   @unique
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
-  role           Role      @default(RIDER)
-  status         Status    @default(ACTIVE)
-  seatAvail      Int       @default(0) @map("seat_avail")
-  companyName    String    @default("") @map("company_name")
-  companyAddress String    @default("") @map("company_address")
-  isOnboarded    Boolean   @default(false) @map("is_onboarded")
+  id              String    @id @default(cuid())
+  name            String?
+  email           String?   @unique
+  emailVerified   DateTime?
+  image           String?
+  accounts        Account[]
+  sessions        Session[]
+  role            Role      @default(RIDER)
+  status          Status    @default(ACTIVE)
+  seatAvail       Int       @default(0) @map("seat_avail")
+  companyName     String    @default("") @map("company_name")
+  companyAddress  String    @default("") @map("company_address")
+  companyCoordLng Float     @default(0) @map("company_coord_lng")
+  companyCoordLat Float     @default(0) @map("company_coord_lat")
+  startLocation   String    @default("") @map("start_location")
+  isOnboarded     Boolean   @default(false) @map("is_onboarded")
 }
 
 model VerificationToken {
