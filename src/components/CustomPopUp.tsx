@@ -1,49 +1,49 @@
 import React from "react";
-import { UserInfo } from "../utils/types";
-import { FaRegBuilding } from "react-icons/fa";
+import { User } from "../utils/types";
+import { FaRegBuilding, FaHome } from "react-icons/fa";
 import { FiMail } from "react-icons/fi";
+import { AiOutlineHome } from "react-icons/ai";
+import { Role, Status } from "@prisma/client";
 
 const CustomPopUp = ({
-	firstName,
-	lastName,
-	rdStatus,
-	seatsAvailability,
+	name,
+	role,
+	seatAvail,
 	status,
 	companyName,
 	companyAddress,
 	email,
-}: UserInfo) => {
+	startLocation,
+}: User) => {
 	return (
 		<div className="flex flex-col space-y-2">
-			<div className="font-bold text-base">{firstName + " " + lastName}</div>
+			<div className="font-bold text-base">{name}</div>
 			<div className="flex flex-row space-x-2">
 				<div
 					className={`text-xs rounded-full py-1 px-3 ${
-						status === "active"
+						status === Status.ACTIVE
 							? "bg-indigo-200 text-indigo-800"
 							: "bg-gray-200 text-gray-800"
 					} `}
 				>
-					{status === "active" ? "Active" : "Inactive"}
+					{status === Status.ACTIVE ? "Active" : "Inactive"}
 				</div>
 				<div
 					className={`text-xs rounded-full py-1 px-3 ${
-						rdStatus === "rider"
+						role === Role.RIDER
 							? "bg-sky-200 text-sky-800"
 							: "bg-orange-200 text-orange-800"
 					} `}
 				>
-					{rdStatus === "rider" ? "Rider" : "Driver"}
+					{role === Role.RIDER ? "Rider" : "Driver"}
 				</div>
-				{rdStatus === "driver" && (
+				{role === Role.DRIVER && (
 					<div className="text-xs rounded-full py-1 px-3 bg-emerald-200 text-emerald-800">
-						{seatsAvailability +
-							" " +
-							(seatsAvailability > 1 ? "seats" : "seat")}
+						{seatAvail + " " + (seatAvail > 1 ? "seats" : "seat")}
 					</div>
 				)}
 			</div>
-			{status === "active" && (
+			{status === Status.ACTIVE && (
 				<div className="space-y-2">
 					<div className="flex items-center space-x-2">
 						<div className="flex justify-center items-center shadow-md p-2 border border-gray-500 rounded-md">
@@ -51,6 +51,7 @@ const CustomPopUp = ({
 						</div>
 						<span>{email}</span>
 					</div>
+
 					<div className="flex items-start space-x-2">
 						<div className="flex justify-center items-center shadow-md p-2 border border-gray-500 rounded-md">
 							<FaRegBuilding className="w-4 h-4" />
@@ -59,6 +60,13 @@ const CustomPopUp = ({
 							<div className="font-medium">{companyName}</div>
 							<div className="text-xs">{companyAddress}</div>
 						</div>
+					</div>
+
+					<div className="flex items-center space-x-2">
+						<div className="flex justify-center items-center shadow-md p-2 border border-gray-500 rounded-md">
+							<AiOutlineHome className="w-4 h-4" />
+						</div>
+						<span>{startLocation}</span>
 					</div>
 				</div>
 			)}

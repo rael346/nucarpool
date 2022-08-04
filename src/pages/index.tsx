@@ -1,17 +1,16 @@
-import { Dialog, Transition } from "@headlessui/react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import type { GetServerSidePropsContext, NextPage } from "next";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { RiFocus3Line } from "react-icons/ri";
-import ProfileModal from "../components/ProfileModal";
-import Spinner from "../components/Spinner";
 import addClusters from "../utils/map/addClusters";
 import addMapEvents from "../utils/map/addMapEvents";
 import addUserLocation from "../utils/map/addUserLocation";
 import { unstable_getServerSession as getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Head from "next/head";
+import { trpc } from "../utils/trpc";
+import DropDownMenu from "../components/DropDownMenu";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
 	const session = await getServerSession(context.req, context.res, authOptions);
@@ -42,29 +41,29 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 const Home: NextPage<any> = ({ accessToken }) => {
+	mapboxgl.accessToken = accessToken;
+	const { data: geoJsonUsers, isLoading: isLoadingGeoJsonUsers } =
+		trpc.useQuery(["user.geoJsonUsersList"]);
+	const { data: user, isLoading: isLoadingUser } = trpc.useQuery(["user.me"]);
 	const [isMap, setMap] = useState<boolean>(false);
 
-	mapboxgl.accessToken = accessToken;
-
 	useEffect(() => {
-		if (true) {
-			// const features = toFeatures(user.uid, data);
-
+		if (!isMap && user && geoJsonUsers) {
 			const map = new mapboxgl.Map({
 				container: "map",
 				style: "mapbox://styles/mapbox/light-v10",
-				center: [70, 40],
+				center: [user.companyCoordLng, user.companyCoordLat],
 				zoom: 10,
 			});
 
-			// map.on("load", () => {
-			// 	addClusters(map, features);
-			// 	addUserLocation(map, userInfo);
-			// 	addMapEvents(map, userInfo);
-			// });
+			map.on("load", () => {
+				addClusters(map, geoJsonUsers);
+				addUserLocation(map, user);
+				addMapEvents(map, user);
+			});
 			setMap(true);
 		}
-	}, [isMap]);
+	}, [isMap, user, geoJsonUsers]);
 
 	return (
 		<>
@@ -72,6 +71,7 @@ const Home: NextPage<any> = ({ accessToken }) => {
 				<title>Home</title>
 			</Head>
 			{/* <ProfileModal userInfo={userInfo!} user={user!} /> */}
+			<DropDownMenu />
 			<button
 				className="flex justify-center items-center w-8 h-8 absolute z-10 right-[8px] bottom-[150px] rounded-md bg-white border-2 border-solid border-gray-300 shadow-sm hover:bg-gray-200"
 				id="fly"

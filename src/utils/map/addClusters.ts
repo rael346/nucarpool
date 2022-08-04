@@ -1,18 +1,17 @@
-import { Feature } from "geojson";
+import { Role, Status } from "@prisma/client";
+import { Feature, FeatureCollection } from "geojson";
 import { Map } from "mapbox-gl";
+import { GeoJsonUsers } from "../types";
 /**
  * Filter Expression: https://docs.mapbox.com/mapbox-gl-js/style-spec/expressions/
  * Clusters example with filter expression: https://docs.mapbox.com/mapbox-gl-js/example/cluster-html/
  * Clusters example: https://docs.mapbox.com/mapbox-gl-js/example/cluster/
  */
 
-const addClusters = (map: Map, features: Feature[]) => {
+const addClusters = (map: Map, geoJsonUsers: GeoJsonUsers) => {
 	map.addSource("company-locations", {
 		type: "geojson",
-		data: {
-			type: "FeatureCollection",
-			features: features,
-		},
+		data: geoJsonUsers,
 		cluster: true,
 		clusterMaxZoom: 14,
 		clusterRadius: 50,
@@ -42,6 +41,8 @@ const addClusters = (map: Map, features: Feature[]) => {
 				100, // point count > 100
 				40,
 			],
+			"circle-stroke-width": 2,
+			"circle-stroke-color": "#fff",
 		},
 	});
 
@@ -67,14 +68,14 @@ const addClusters = (map: Map, features: Feature[]) => {
 				"case",
 				[
 					"all",
-					["==", ["get", "status"], "active"], // active user
-					["==", ["get", "rdStatus"], "rider"], // also a rider
+					["==", ["get", "status"], Status.ACTIVE], // active user
+					["==", ["get", "role"], Role.RIDER], // also a rider
 				],
 				"#0ea5e9", // blue-ish color
 				[
 					"all",
-					["==", ["get", "status"], "active"], // active user
-					["==", ["get", "rdStatus"], "driver"], // also a driver
+					["==", ["get", "status"], Status.ACTIVE], // active user
+					["==", ["get", "role"], Role.DRIVER], // also a driver
 				],
 				"#f97316", // red-ish color
 				"#808080", // gray for inactive user

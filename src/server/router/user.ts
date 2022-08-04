@@ -22,6 +22,8 @@ export const userRouter = createProtectedRouter()
 					seatAvail: true,
 					companyName: true,
 					companyAddress: true,
+					companyCoordLng: true,
+					companyCoordLat: true,
 					startLocation: true,
 				},
 			});
