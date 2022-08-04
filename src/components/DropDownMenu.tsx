@@ -1,5 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { Fragment } from "react";
@@ -9,6 +9,10 @@ import { SpinnerIcon } from "./icons";
 const DropDownMenu = () => {
 	const { data: session, status } = useSession();
 	const loading = status === "loading";
+
+	const logout = () => {
+		signOut();
+	};
 
 	return (
 		<div className="fixed z-10 right-2 top-2 text-right">
@@ -32,12 +36,12 @@ const DropDownMenu = () => {
 								as="div"
 								className="flex flex-col justify-center items-center p-6"
 							>
-								<img
+								<Image
 									alt="avatar"
 									src={session.user.image!}
-									// width="100px"
-									// height="100px"
-									className="w-20 h-20 rounded-full mb-2"
+									width="100px"
+									height="100px"
+									className="rounded-full mb-2"
 								/>
 								<h1 className="font-bold text-lg">{session.user.name}</h1>
 								<p className="font-light text-sm text-gray-500">
@@ -53,7 +57,10 @@ const DropDownMenu = () => {
 								as="div"
 								className="flex flex-col justify-center items-center py-4 px-2"
 							>
-								<button className="w-4/5 rounded text-center bg-white border border-gray-300 px-3 py-2 hover:bg-gray-100">
+								<button
+									onClick={logout}
+									className="w-4/5 rounded text-center bg-white border border-gray-300 px-3 py-2 hover:bg-gray-100"
+								>
 									Sign Out
 								</button>
 							</Menu.Item>

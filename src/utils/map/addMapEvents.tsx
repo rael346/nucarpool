@@ -47,12 +47,12 @@ const addMapEvents = (map: Map, user: User) => {
 			.addTo(map);
 	});
 
-	// map.on("mouseenter", "clusters", () => {
-	// 	map.getCanvas().style.cursor = "pointer";
-	// });
-	// map.on("mouseleave", "clusters", () => {
-	// 	map.getCanvas().style.cursor = "";
-	// });
+	map.on("mouseenter", "clusters", () => {
+		map.getCanvas().style.cursor = "pointer";
+	});
+	map.on("mouseleave", "clusters", () => {
+		map.getCanvas().style.cursor = "";
+	});
 
 	document.getElementById("fly")!.addEventListener("click", () => {
 		map.flyTo({
