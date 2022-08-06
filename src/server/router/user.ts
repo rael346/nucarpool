@@ -72,7 +72,13 @@ export const userRouter = createProtectedRouter()
 	})
 	.query("geoJsonUsersList", {
 		async resolve({ ctx }) {
+			const id = ctx.session.user?.id;
 			const users = await ctx.prisma.user.findMany({
+				where: {
+					id: {
+						not: id, // doesn't include the current user
+					},
+				},
 				select: {
 					id: true,
 					name: true,
