@@ -78,6 +78,7 @@ export const userRouter = createProtectedRouter()
 					id: {
 						not: id, // doesn't include the current user
 					},
+					isOnboarded: true, // only include user that have finished onboarding
 				},
 				select: {
 					id: true,
