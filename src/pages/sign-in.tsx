@@ -9,6 +9,7 @@ import React from "react";
 import Head from "next/head";
 import Header from "../components/Header";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);
@@ -36,11 +37,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 const SignIn: NextPage = () => {
+  const router = useRouter();
   const handleOnclick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    signIn("google", {
-      callbackUrl: "/onboard",
-    });
+    signIn("google");
+    router.push("/onboard");
   };
 
   return (
