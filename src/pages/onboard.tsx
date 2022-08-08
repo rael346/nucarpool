@@ -17,6 +17,7 @@ import { z } from "zod";
 import { trpc } from "../utils/trpc";
 import { Role, Status } from "@prisma/client";
 import { TextField } from "../components/TextField";
+import Radio from "../components/Radio";
 
 type OnboardingFormInputs = {
 	role: Role;
@@ -148,17 +149,23 @@ const Onboard: NextPage = () => {
 						onSubmit={handleSubmit(onSubmit)}
 					>
 						<div className="flex flex-col space-y-2">
-							<label htmlFor="rdStatus" className="font-medium text-sm">
-								Role
-							</label>
-							<select
-								id="rdStatus"
-								className="border-gray-300 shadow-sm rounded-md px-3 py-2"
-								{...register("role")}
-							>
-								<option value={Role.RIDER}>Rider</option>
-								<option value={Role.DRIVER}>Driver</option>
-							</select>
+							<h1 className="font-medium text-sm">Role</h1>
+							<div className="flex space-x-4">
+								<Radio
+									label="Rider"
+									id="rider"
+									error={errors.role}
+									value={Role.RIDER}
+									{...register("role")}
+								/>
+								<Radio
+									label="Driver"
+									id="driver"
+									error={errors.role}
+									value={Role.DRIVER}
+									{...register("role")}
+								/>
+							</div>
 						</div>
 
 						{watch("role") == Role.DRIVER && (

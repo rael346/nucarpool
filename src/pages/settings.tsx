@@ -16,13 +16,9 @@ import Header from "../components/Header";
 import { TextField } from "../components/TextField";
 import { trpc } from "../utils/trpc";
 import { authOptions } from "./api/auth/[...nextauth]";
-import { createSSGHelpers } from "@trpc/react/ssg";
-import { appRouter } from "../server/router";
-import superjson from "superjson";
-import { createContext } from "../server/router/context";
 import { User } from "../utils/types";
-import { SpinnerIcon } from "../components/icons";
 import Spinner from "../components/Spinner";
+import Radio from "../components/Radio";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
 	const session = await getServerSession(context.req, context.res, authOptions);
@@ -171,197 +167,217 @@ function UserEditForm({ user }: { user: User }) {
 	};
 
 	return (
-		<div className="flex h-screen items-center justify-center bg-gray-100">
-			<div className="rounded-2xl bg-white flex flex-col justify-center items-center p-6 m-4 space-y-4 drop-shadow-lg">
-				<Header />
-				<h1 className="font-bold text-2xl mb-4">Onboard - Profile</h1>
-				<form
-					className="w-full flex flex-col space-y-4"
-					onSubmit={handleSubmit(onSubmit)}
-				>
-					<div className="flex flex-col space-y-2">
-						<label htmlFor="rdStatus" className="font-medium text-sm">
-							Role
-						</label>
-						<select
-							id="rdStatus"
-							className="border-gray-300 shadow-sm rounded-md px-3 py-2"
-							{...register("role")}
-						>
-							<option value={Role.RIDER}>Rider</option>
-							<option value={Role.DRIVER}>Driver</option>
-						</select>
-					</div>
+		<>
+			<Head>Settings</Head>
+			<div className="flex h-screen items-center justify-center bg-gray-100">
+				<div className="rounded-2xl bg-white flex flex-col justify-center items-center p-6 m-4 space-y-4 drop-shadow-lg">
+					<Header />
+					<h1 className="font-bold text-2xl mb-4">Settings</h1>
+					<form
+						className="w-full flex flex-col space-y-4"
+						onSubmit={handleSubmit(onSubmit)}
+					>
+						<div className="flex flex-col space-y-2">
+							<h1 className="font-medium text-sm">Role</h1>
+							<div className="flex space-x-4">
+								<Radio
+									label="Rider"
+									id="rider"
+									error={errors.role}
+									value={Role.RIDER}
+									{...register("role")}
+								/>
+								<Radio
+									label="Driver"
+									id="driver"
+									error={errors.role}
+									value={Role.DRIVER}
+									{...register("role")}
+								/>
+							</div>
+						</div>
 
-					{watch("role") == Role.DRIVER && (
+						{watch("role") == Role.DRIVER && (
+							<TextField
+								label="Seat Availability"
+								id="seatAvail"
+								error={errors.seatAvail}
+								type="number"
+								{...register("seatAvail", { valueAsNumber: true })}
+							/>
+						)}
+
+						<div className="flex flex-col space-y-2">
+							<h1 className="font-medium text-sm">Status</h1>
+							<div className="flex space-x-4">
+								<Radio
+									label="Active"
+									id="active"
+									error={errors.status}
+									value={Status.ACTIVE}
+									{...register("status")}
+								/>
+								<Radio
+									label="Inactive"
+									id="inactive"
+									error={errors.status}
+									value={Status.INACTIVE}
+									{...register("status")}
+								/>
+							</div>
+						</div>
+
 						<TextField
-							label="Seat Availability"
-							id="seatAvail"
-							error={errors.seatAvail}
-							type="number"
-							{...register("seatAvail", { valueAsNumber: true })}
+							label="Company Name"
+							id="companyName"
+							error={errors.companyName}
+							type="text"
+							{...register("companyName")}
 						/>
-					)}
 
-					<div className="flex flex-col space-y-2">
-						<label htmlFor="status" className="font-medium text-sm">
-							Role
-						</label>
-						<select
-							id="status"
-							className="border-gray-300 shadow-sm rounded-md px-3 py-2"
-							{...register("status")}
-						>
-							<option value={Status.ACTIVE}>Active</option>
-							<option value={Status.INACTIVE}>Inactive</option>
-						</select>
-					</div>
+						{/* Company Address field  */}
 
-					<TextField
-						label="Company Name"
-						id="companyName"
-						error={errors.companyName}
-						type="text"
-						{...register("companyName")}
-					/>
-
-					{/* Company Address field  */}
-
-					<div className="flex flex-col space-y-2">
-						<label htmlFor="companyAddress" className="font-medium text-sm">
-							Company Address
-						</label>
-						<p className="font-light text-xs text-gray-500">
-							Note: Select the autocomplete results, even if you typed the
-							address out
-						</p>
-						<Combobox value={selected} onChange={setSelected}>
-							<Combobox.Input
-								className={`w-full shadow-sm rounded-md px-3 py-2 ${
-									errors.companyAddress ? "border-red-500" : "border-gray-300"
-								}`}
-								displayValue={(feat: any) =>
-									feat.place_name ? feat.place_name : ""
-								}
-								type="text"
-								{...register("companyAddress")}
-								onChange={debounce(handleChange, 500)}
-							/>
-							<Transition
-								as={Fragment}
-								leave="transition ease-in duration-100"
-								leaveFrom="opacity-100"
-								leaveTo="opacity-0"
-							>
-								<Combobox.Options className="w-full rounded-md bg-white text-base shadow-lg focus:outline-none ">
-									{suggestions.length === 0 ? (
-										<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-											Nothing found.
-										</div>
-									) : (
-										suggestions.map((feat: any) => (
-											<Combobox.Option
-												key={feat.id}
-												className={({ active }) =>
-													`max-w-fit relative cursor-default select-none p-3 ${
-														active ? "bg-blue-400 text-white" : "text-gray-900"
-													}`
-												}
-												value={feat}
-											>
-												{feat.place_name}
-											</Combobox.Option>
-										))
-									)}
-								</Combobox.Options>
-							</Transition>
-						</Combobox>
-						{errors.companyAddress && (
-							<p className="text-red-500 text-sm mt-2">
-								{errors?.companyAddress?.message}
+						<div className="flex flex-col space-y-2">
+							<label htmlFor="companyAddress" className="font-medium text-sm">
+								Company Address
+							</label>
+							<p className="font-light text-xs text-gray-500">
+								Note: Select the autocomplete results, even if you typed the
+								address out
 							</p>
-						)}
-					</div>
+							<Combobox value={selected} onChange={setSelected}>
+								<Combobox.Input
+									className={`w-full shadow-sm rounded-md px-3 py-2 ${
+										errors.companyAddress ? "border-red-500" : "border-gray-300"
+									}`}
+									displayValue={(feat: any) =>
+										feat.place_name ? feat.place_name : ""
+									}
+									type="text"
+									{...register("companyAddress")}
+									onChange={debounce(handleChange, 500)}
+								/>
+								<Transition
+									as={Fragment}
+									leave="transition ease-in duration-100"
+									leaveFrom="opacity-100"
+									leaveTo="opacity-0"
+								>
+									<Combobox.Options className="w-full rounded-md bg-white text-base shadow-lg focus:outline-none ">
+										{suggestions.length === 0 ? (
+											<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+												Nothing found.
+											</div>
+										) : (
+											suggestions.map((feat: any) => (
+												<Combobox.Option
+													key={feat.id}
+													className={({ active }) =>
+														`max-w-fit relative cursor-default select-none p-3 ${
+															active
+																? "bg-blue-400 text-white"
+																: "text-gray-900"
+														}`
+													}
+													value={feat}
+												>
+													{feat.place_name}
+												</Combobox.Option>
+											))
+										)}
+									</Combobox.Options>
+								</Transition>
+							</Combobox>
+							{errors.companyAddress && (
+								<p className="text-red-500 text-sm mt-2">
+									{errors?.companyAddress?.message}
+								</p>
+							)}
+						</div>
 
-					{/* Starting Location field  */}
+						{/* Starting Location field  */}
 
-					<div className="flex flex-col space-y-2">
-						<label htmlFor="startlocation" className="font-medium text-sm">
-							Starting Location
-						</label>
-						<p className="font-light text-xs text-gray-500">
-							Note: Enter the neighborhood that you want to go from, and select
-							the autocomplete results, even if you typed the address out
-						</p>
-						<Combobox
-							value={startLocationSelected}
-							onChange={setStartLocationSelected}
-						>
-							<Combobox.Input
-								className={`w-full shadow-sm rounded-md px-3 py-2 ${
-									errors.startLocation ? "border-red-500" : "border-gray-300"
-								}`}
-								displayValue={(feat: any) =>
-									feat.place_name ? feat.place_name : ""
-								}
-								type="text"
-								{...register("startLocation")}
-								onChange={debounce(handleStartLocationChange, 500)}
-							/>
-							<Transition
-								as={Fragment}
-								leave="transition ease-in duration-100"
-								leaveFrom="opacity-100"
-								leaveTo="opacity-0"
-							>
-								<Combobox.Options className="w-full rounded-md bg-white text-base shadow-lg focus:outline-none ">
-									{startLocationsuggestions.length === 0 ? (
-										<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-											Nothing found.
-										</div>
-									) : (
-										startLocationsuggestions.map((feat: any) => (
-											<Combobox.Option
-												key={feat.id}
-												className={({ active }) =>
-													`max-w-fit relative cursor-default select-none p-3 ${
-														active ? "bg-blue-400 text-white" : "text-gray-900"
-													}`
-												}
-												value={feat}
-											>
-												{feat.place_name}
-											</Combobox.Option>
-										))
-									)}
-								</Combobox.Options>
-							</Transition>
-						</Combobox>
-						{errors.startLocation && (
-							<p className="text-red-500 text-sm mt-2">
-								{errors?.startLocation?.message}
+						<div className="flex flex-col space-y-2">
+							<label htmlFor="startlocation" className="font-medium text-sm">
+								Starting Location
+							</label>
+							<p className="font-light text-xs text-gray-500">
+								Note: Enter the neighborhood that you want to go from, and
+								select the autocomplete results, even if you typed the address
+								out
 							</p>
-						)}
-					</div>
+							<Combobox
+								value={startLocationSelected}
+								onChange={setStartLocationSelected}
+							>
+								<Combobox.Input
+									className={`w-full shadow-sm rounded-md px-3 py-2 ${
+										errors.startLocation ? "border-red-500" : "border-gray-300"
+									}`}
+									displayValue={(feat: any) =>
+										feat.place_name ? feat.place_name : ""
+									}
+									type="text"
+									{...register("startLocation")}
+									onChange={debounce(handleStartLocationChange, 500)}
+								/>
+								<Transition
+									as={Fragment}
+									leave="transition ease-in duration-100"
+									leaveFrom="opacity-100"
+									leaveTo="opacity-0"
+								>
+									<Combobox.Options className="w-full rounded-md bg-white text-base shadow-lg focus:outline-none ">
+										{startLocationsuggestions.length === 0 ? (
+											<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+												Nothing found.
+											</div>
+										) : (
+											startLocationsuggestions.map((feat: any) => (
+												<Combobox.Option
+													key={feat.id}
+													className={({ active }) =>
+														`max-w-fit relative cursor-default select-none p-3 ${
+															active
+																? "bg-blue-400 text-white"
+																: "text-gray-900"
+														}`
+													}
+													value={feat}
+												>
+													{feat.place_name}
+												</Combobox.Option>
+											))
+										)}
+									</Combobox.Options>
+								</Transition>
+							</Combobox>
+							{errors.startLocation && (
+								<p className="text-red-500 text-sm mt-2">
+									{errors?.startLocation?.message}
+								</p>
+							)}
+						</div>
 
-					<div className="flex justify-between">
-						<button
-							type="button"
-							onClick={() => router.push("/")}
-							className="rounded-md text-center text-white bg-blue-500 border border-gray-300 px-3 py-2 hover:bg-blue-800"
-						>
-							Return to Home
-						</button>
-						<button
-							type="submit"
-							className=" bg-northeastern-red hover:bg-red-800 rounded-md text-white px-3 py-2 shadow"
-						>
-							Submit
-						</button>
-					</div>
-				</form>
+						<div className="flex justify-between">
+							<button
+								type="button"
+								onClick={() => router.push("/")}
+								className="rounded-md text-center text-white bg-blue-500 border border-gray-300 px-3 py-2 hover:bg-blue-800"
+							>
+								Return to Home
+							</button>
+							<button
+								type="submit"
+								className=" bg-northeastern-red hover:bg-red-800 rounded-md text-white px-3 py-2 shadow"
+							>
+								Submit
+							</button>
+						</div>
+					</form>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 }
 
