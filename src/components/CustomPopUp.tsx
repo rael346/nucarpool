@@ -43,33 +43,31 @@ const CustomPopUp = ({
 					</div>
 				)}
 			</div>
-			{status === Status.ACTIVE && (
-				<div className="space-y-2">
-					<div className="flex items-center space-x-2">
-						<div className="flex justify-center items-center shadow-md p-2 border border-gray-500 rounded-md">
-							<FiMail className="w-4 h-4" />
-						</div>
-						<span>{email}</span>
+			<div className="space-y-2">
+				<div className="flex items-center space-x-2">
+					<div className="flex justify-center items-center shadow-md p-2 border border-gray-500 rounded-md">
+						<FiMail className="w-4 h-4" />
 					</div>
+					<span>{email}</span>
+				</div>
 
-					<div className="flex items-start space-x-2">
-						<div className="flex justify-center items-center shadow-md p-2 border border-gray-500 rounded-md">
-							<FaRegBuilding className="w-4 h-4" />
-						</div>
-						<div>
-							<div className="font-medium">{companyName}</div>
-							<div className="text-xs">{companyAddress}</div>
-						</div>
+				<div className="flex items-start space-x-2">
+					<div className="flex justify-center items-center shadow-md p-2 border border-gray-500 rounded-md">
+						<FaRegBuilding className="w-4 h-4" />
 					</div>
-
-					<div className="flex items-center space-x-2">
-						<div className="flex justify-center items-center shadow-md p-2 border border-gray-500 rounded-md">
-							<AiOutlineHome className="w-4 h-4" />
-						</div>
-						<span>{startLocation}</span>
+					<div>
+						<div className="font-medium">{companyName}</div>
+						<div className="text-xs">{companyAddress}</div>
 					</div>
 				</div>
-			)}
+
+				<div className="flex items-center space-x-2">
+					<div className="flex justify-center items-center shadow-md p-2 border border-gray-500 rounded-md">
+						<AiOutlineHome className="w-4 h-4" />
+					</div>
+					<span>{startLocation}</span>
+				</div>
+			</div>
 		</div>
 	);
 };
