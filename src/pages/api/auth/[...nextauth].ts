@@ -6,25 +6,25 @@ import { prisma } from "../../../server/db/client";
 import { serverEnv } from "../../../utils/env/server";
 
 export const authOptions: NextAuthOptions = {
-	callbacks: {
-		session({ session, user }) {
-			if (session.user) {
-				session.user.id = user.id;
-				session.user.isOnboarded = user.isOnboarded;
-			}
-			return session;
-		},
-	},
-	adapter: PrismaAdapter(prisma),
-	providers: [
-		GoogleProvider({
-			clientId: serverEnv.GOOGLE_CLIENT_ID!,
-			clientSecret: serverEnv.GOOGLE_CLIENT_SECRET!,
-		}),
-	],
-	pages: {
-		signIn: "/sign-in",
-	},
+  callbacks: {
+    session({ session, user }) {
+      if (session.user) {
+        session.user.id = user.id;
+        session.user.isOnboarded = user.isOnboarded;
+      }
+      return session;
+    },
+  },
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    GoogleProvider({
+      clientId: serverEnv.GOOGLE_CLIENT_ID!,
+      clientSecret: serverEnv.GOOGLE_CLIENT_SECRET!,
+    }),
+  ],
+  pages: {
+    signIn: "/sign-in",
+  },
 };
 
 export default NextAuth(authOptions);

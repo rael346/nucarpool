@@ -14,73 +14,73 @@ import DropDownMenu from "../components/DropDownMenu";
 import { browserEnv } from "../utils/env/browser";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-	const session = await getServerSession(context.req, context.res, authOptions);
+  const session = await getServerSession(context.req, context.res, authOptions);
 
-	if (session?.user) {
-		if (!session.user.isOnboarded) {
-			return {
-				redirect: {
-					destination: "/onboard",
-					permanent: false,
-				},
-			};
-		}
-	} else {
-		return {
-			redirect: {
-				destination: "/sign-in",
-				permanent: false,
-			},
-		};
-	}
+  if (session?.user) {
+    if (!session.user.isOnboarded) {
+      return {
+        redirect: {
+          destination: "/onboard",
+          permanent: false,
+        },
+      };
+    }
+  } else {
+    return {
+      redirect: {
+        destination: "/sign-in",
+        permanent: false,
+      },
+    };
+  }
 
-	return {
-		props: {},
-	};
+  return {
+    props: {},
+  };
 }
 
 mapboxgl.accessToken = browserEnv.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
 const Home: NextPage<any> = () => {
-	const { data: geoJsonUsers, isLoading: isLoadingGeoJsonUsers } =
-		trpc.useQuery(["user.geoJsonUsersList"]);
-	const { data: user, isLoading: isLoadingUser } = trpc.useQuery(["user.me"]);
-	const [isMap, setMap] = useState<boolean>(false);
+  const { data: geoJsonUsers, isLoading: isLoadingGeoJsonUsers } =
+    trpc.useQuery(["user.geoJsonUsersList"]);
+  const { data: user, isLoading: isLoadingUser } = trpc.useQuery(["user.me"]);
+  const [isMap, setMap] = useState<boolean>(false);
 
-	useEffect(() => {
-		if (!isMap && user && geoJsonUsers) {
-			const map = new mapboxgl.Map({
-				container: "map",
-				style: "mapbox://styles/mapbox/light-v10",
-				center: [user.companyCoordLng, user.companyCoordLat],
-				zoom: 10,
-			});
+  useEffect(() => {
+    if (!isMap && user && geoJsonUsers) {
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/light-v10",
+        center: [user.companyCoordLng, user.companyCoordLat],
+        zoom: 10,
+      });
 
-			map.on("load", () => {
-				addClusters(map, geoJsonUsers);
-				addUserLocation(map, user);
-				addMapEvents(map, user);
-			});
-			setMap(true);
-		}
-	}, [isMap, user, geoJsonUsers]);
+      map.on("load", () => {
+        addClusters(map, geoJsonUsers);
+        addUserLocation(map, user);
+        addMapEvents(map, user);
+      });
+      setMap(true);
+    }
+  }, [isMap, user, geoJsonUsers]);
 
-	return (
-		<>
-			<Head>
-				<title>Home</title>
-			</Head>
-			{/* <ProfileModal userInfo={userInfo!} user={user!} /> */}
-			<DropDownMenu />
-			<button
-				className="flex justify-center items-center w-8 h-8 absolute z-10 right-[8px] bottom-[150px] rounded-md bg-white border-2 border-solid border-gray-300 shadow-sm hover:bg-gray-200"
-				id="fly"
-			>
-				<RiFocus3Line />
-			</button>
-			<div id="map" className="h-screen"></div>
-		</>
-	);
+  return (
+    <>
+      <Head>
+        <title>Home</title>
+      </Head>
+      {/* <ProfileModal userInfo={userInfo!} user={user!} /> */}
+      <DropDownMenu />
+      <button
+        className="flex justify-center items-center w-8 h-8 absolute z-10 right-[8px] bottom-[150px] rounded-md bg-white border-2 border-solid border-gray-300 shadow-sm hover:bg-gray-200"
+        id="fly"
+      >
+        <RiFocus3Line />
+      </button>
+      <div id="map" className="h-screen"></div>
+    </>
+  );
 };
 
 export default Home;

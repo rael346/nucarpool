@@ -4,19 +4,19 @@
  * https://brand.northeastern.edu/visual-design/typography/
  */
 module.exports = {
-	content: [
-		"./src/pages/**/*.{js,ts,jsx,tsx}",
-		"./src/components/**/*.{js,ts,jsx,tsx}",
-	],
-	theme: {
-		extend: {
-			colors: {
-				"northeastern-red": "#C8102E",
-			},
-		},
-	},
-	plugins: [
-		require("@tailwindcss/forms"),
-		// ...
-	],
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        "northeastern-red": "#C8102E",
+      },
+    },
+  },
+  plugins: [
+    require("@tailwindcss/forms"),
+    // ...
+  ],
 };
