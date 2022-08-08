@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { Fragment } from "react";
 import { AiOutlineUser } from "react-icons/ai";
-import { SpinnerIcon } from "./icons";
 
 const DropDownMenu = () => {
   const { data: session, status } = useSession();
