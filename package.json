@@ -19,6 +19,7 @@
 		"@trpc/react": "^9.25.3",
 		"@trpc/server": "^9.25.3",
 		"axios": "^0.27.2",
+		"envsafe": "^2.0.3",
 		"lodash": "^4.17.21",
 		"mapbox-gl": "^2.9.1",
 		"next": "12.2.2",

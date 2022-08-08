@@ -11,6 +11,7 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import Head from "next/head";
 import { trpc } from "../utils/trpc";
 import DropDownMenu from "../components/DropDownMenu";
+import { browserEnv } from "../utils/env/browser";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
 	const session = await getServerSession(context.req, context.res, authOptions);
@@ -34,14 +35,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	}
 
 	return {
-		props: {
-			accessToken: process.env.MAPBOX_ACCESS_TOKEN,
-		},
+		props: {},
 	};
 }
 
-const Home: NextPage<any> = ({ accessToken }) => {
-	mapboxgl.accessToken = accessToken;
+mapboxgl.accessToken = browserEnv.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+
+const Home: NextPage<any> = () => {
 	const { data: geoJsonUsers, isLoading: isLoadingGeoJsonUsers } =
 		trpc.useQuery(["user.geoJsonUsersList"]);
 	const { data: user, isLoading: isLoadingUser } = trpc.useQuery(["user.me"]);
