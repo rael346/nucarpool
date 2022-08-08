@@ -17,9 +17,6 @@ export const serverEnv = {
       input: process.env.NEXTAUTH_SECRET,
       devDefault: "xxx",
     }),
-    NEXTAUTH_URL: url({
-      input: process.env.NEXTAUTH_URL,
-    }),
     GOOGLE_CLIENT_ID: str({
       input: process.env.GOOGLE_CLIENT_ID,
     }),
