@@ -16,6 +16,18 @@ export const authOptions: NextAuthOptions = {
     },
   },
   secret: serverEnv.NEXTAUTH_SECRET,
+  debug: true,
+  logger: {
+    error(code, metadata) {
+      console.error(code, metadata);
+    },
+    warn(code) {
+      console.warn(code);
+    },
+    debug(code, metadata) {
+      console.debug(code, metadata);
+    },
+  },
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
