@@ -1,30 +1,36 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Boilerplate--we would only change this if we wanted to change how 
+// the Prisma Clienet is generated.
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
 }
 
+// Specify the DB type and the connection string AKA DB_URL
 datasource db {
   provider             = "mysql"
   url                  = env("DATABASE_URL")
   referentialIntegrity = "prisma"
 }
 
+// Represents a Role.
 enum Role {
   RIDER
   DRIVER
 }
 
+// Represents a Status.
 enum Status {
   ACTIVE
   INACTIVE
 }
 
+// Represents an Account--need this for NextAuth.
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
+  id                String  @id @default(cuid()) // primary key
+  userId            String // foreign key
   type              String
   provider          String
   providerAccountId String
@@ -41,22 +47,24 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+// Represents a Session--need this for NextAuth
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(cuid()) // primary key
   sessionToken String   @unique
-  userId       String
+  userId       String // foreign key
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// Represents a User--need this for NextAuth and obviously the data it stores.
 model User {
-  id              String    @id @default(cuid())
+  id              String    @id @default(cuid()) // primary key
   name            String?
   email           String?   @unique
   emailVerified   DateTime?
   image           String?
-  accounts        Account[]
-  sessions        Session[]
+  accounts        Account[] // can have multiple accounts
+  sessions        Session[] // can have multiple settings
   role            Role      @default(RIDER)
   status          Status    @default(ACTIVE)
   seatAvail       Int       @default(0) @map("seat_avail")
@@ -68,6 +76,7 @@ model User {
   isOnboarded     Boolean   @default(false) @map("is_onboarded")
 }
 
+// Represents a VerificationToken--need this for NextAuth.
 model VerificationToken {
   identifier String
   token      String   @unique
