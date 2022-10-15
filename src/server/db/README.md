@@ -7,6 +7,7 @@ Prisma is an [ORM](https://stackoverflow.com/questions/1279613/what-is-an-orm-ho
 ### Contents:
 
 - [Usage](#usage)
+- [Brief Intro to Zod](#brief-intro-to-zod)
 
 ---
 
@@ -39,3 +40,61 @@ There are a few important things happening here.
 3. We use the function ```findOne()```, which returns a user in the user table that matches the ID in the where "clause", and only displays the name of the user. 
     
     This is roughly equivalent to the SQL query: ```SELECT name FROM user WHERE id = userId;```
+
+---
+
+### Brief Intro to Zod 
+
+[Zod](https://github.com/colinhacks/zod) is used to validate calls to our tRPC routes/endpoints. 
+
+Below is an example of how Zod is used in the codebase. This code is altered to contain only the relevant bits. My understanding of Zod's usage here is as follows: 
+
+1. A call to this endpoint looks something like this: 
+    ```typescript
+    editUserMutation.mutate({
+        role: userInfo.role,
+        status: userInfo.status,
+        seatAvail: userInfo.seatAvail,
+        ...
+    })
+    ```
+
+2. When edit is called, The input must first pass through the ```z.object```, which enforces type and other constraints on the data. The key part here is if you want to do scheme validation, follow the syntax below, specifying what you want as a ```z.object```, and putting it as the ```input```. tRPC supports Zod, which is why we can pass it to ```input``` as shown below.
+
+2. If the input is valid according to Zod, the code execution continues through to the resolve, where we use a prisma ```update``` to update the data in our DB as specified.
+
+```typescript 
+export const userRouter = createProtectedRouter()
+.mutation("edit", {
+    input: z.object({
+    role: z.nativeEnum(Role),
+    status: z.nativeEnum(Status),
+    seatAvail: z.number().int().min(0),
+    companyName: z.string().min(1),
+    companyAddress: z.string().min(1),
+    companyCoordLng: z.number(),
+    companyCoordLat: z.number(),
+    startLocation: z.string().min(1),
+    isOnboarded: z.boolean(),
+    }),
+    async resolve({ ctx, input }) {
+    const id = ctx.session.user?.id;
+    const user = await ctx.prisma.user.update({
+        where: { id },
+        data: {
+        role: input.role,
+        status: input.status,
+        seatAvail: input.seatAvail,
+        companyName: input.companyName,
+        companyAddress: input.companyAddress,
+        companyCoordLng: input.companyCoordLng,
+        companyCoordLat: input.companyCoordLat,
+        startLocation: input.startLocation,
+        isOnboarded: input.isOnboarded,
+        },
+    });
+
+    return user;
+    },
+})
+```
