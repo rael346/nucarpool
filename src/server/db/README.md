@@ -8,6 +8,7 @@ Prisma is an [ORM](https://stackoverflow.com/questions/1279613/what-is-an-orm-ho
 
 - [Usage](#usage)
 - [Brief Intro to Zod](#brief-intro-to-zod)
+- [Changing the Schema](#changing-the-schema)
 
 ---
 
@@ -49,7 +50,7 @@ There are a few important things happening here.
 
 Below is an example of how Zod is used in the codebase. This code is altered to contain only the relevant bits. My understanding of Zod's usage here is as follows: 
 
-1. A call to this endpoint looks something like this: 
+1. [A call](../../../src/pages/settings.tsx#L156) to this endpoint looks something like this: 
     ```typescript
     editUserMutation.mutate({
         role: userInfo.role,
@@ -98,3 +99,11 @@ export const userRouter = createProtectedRouter()
     },
 })
 ```
+---
+### Changing the Schema
+
+The current schema is defined inside the the [schema.prisma](../../../prisma/schema.prisma). This schema is a default NextAuth schema with a few attributes/enums added, so we can store data we care about, like information about drivers and riders.
+
+You can read more about the schema.prisma syntax [here](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model).
+
+If you change something in the schema.prisma file, the change must be reflected in your actual database and prisma has to regenerate the code for the client. You can achieve both of these with a ```yarn prisma db push``` command. This syncs everything back up.
