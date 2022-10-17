@@ -46,7 +46,7 @@ There are a few important things happening here.
 
 ### Brief Intro to Zod 
 
-[Zod](https://github.com/colinhacks/zod) is used to validate calls to our tRPC routes/endpoints. 
+[Zod](https://zod.dev/) is used to validate input object types in calls to our tRPC routes/endpoints. 
 
 Below is an example of how Zod is used in the codebase. This code is altered to contain only the relevant bits. My understanding of Zod's usage here is as follows: 
 
