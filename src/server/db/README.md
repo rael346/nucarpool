@@ -60,7 +60,7 @@ Below is an example of how Zod is used in the codebase. This code is altered to 
     })
     ```
 
-2. When edit is called, The input must first pass through the ```z.object```, which enforces type and other constraints on the data. The key part here is if you want to do scheme validation, follow the syntax below, specifying what you want as a ```z.object```, and putting it as the ```input```. tRPC supports Zod, which is why we can pass it to ```input``` as shown below.
+2. When edit is called, the input must first pass through the ```z.object```, which enforces type and other constraints on the data. The key part here is if you want to do schema validation, follow the syntax below, specifying what you want as a ```z.object```, and putting it as the ```input```. tRPC supports Zod, which is why we can pass it to ```input``` as shown below.
 
 2. If the input is valid according to Zod, the code execution continues through to the resolve, where we use a prisma ```update``` to update the data in our DB as specified.
 
