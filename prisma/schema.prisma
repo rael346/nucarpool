@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 // Boilerplate--we would only change this if we wanted to change how 
-// the Prisma Clienet is generated.
+// the Prisma Client is generated.
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
