@@ -106,4 +106,4 @@ The current schema is defined inside the the [schema.prisma](../../../prisma/sch
 
 You can read more about the schema.prisma syntax [here](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model).
 
-If you change something in the schema.prisma file, the change must be reflected in your actual database and prisma has to regenerate the code for the client. You can achieve both of these with a ```yarn prisma db push``` command. This syncs everything back up.
+If you change something in the schema.prisma file, the change must be reflected in your actual database and prisma has to regenerate the code for the client. You can achieve both of these with a ```yarn prisma db push``` OR ```yarn db:schema``` command. This syncs everything back up.
