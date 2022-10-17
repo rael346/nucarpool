@@ -4,7 +4,7 @@
 
 Prisma is an [ORM](https://stackoverflow.com/questions/1279613/what-is-an-orm-how-does-it-work-and-how-should-i-use-one), which lets us interact with a database without writing SQL queries as a string. This folder contains our Prisma client, which we use to interact with our mySQL database. In this codebase, the client is accessed through the [Context](../router/context.ts). "Context allows us to "bundle" together information to be passed into each API request". For a better understanding of Prisma overall, I recommend following this [guide](https://www.prisma.io/docs/getting-started/quickstart). Since you need a database for this guide, I recommend using PlanetScale, since it's easy to use and it's what Duy used. 
 
-### Contents:
+### Contents
 
 - [Usage](#usage)
 - [Brief Intro to Zod](#brief-intro-to-zod)
