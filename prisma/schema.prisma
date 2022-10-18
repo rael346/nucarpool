@@ -1,18 +1,19 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Boilerplate--we would only change this if we wanted to change how 
-// the Prisma Client is generated.
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
-}
 
 // Specify the DB type and the connection string AKA DB_URL
 datasource db {
   provider             = "mysql"
   url                  = env("DATABASE_URL")
   referentialIntegrity = "prisma"
+}
+
+// Boilerplate--we would only change this if we wanted to change how 
+// the Prisma Client is generated.
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 // Represents a Role.
@@ -29,11 +30,11 @@ enum Status {
 
 // Represents an Account--need this for NextAuth.
 model Account {
-  id                String  @id @default(cuid()) // primary key
-  userId            String // foreign key
+  id                String  @id @default(cuid()) //primary key
+  userId            String @map(name: "user_id") //foreign key
   type              String
   provider          String
-  providerAccountId String
+  providerAccountId String @map(name: "provider_account_id")
   refresh_token     String? @db.Text
   access_token      String? @db.Text
   expires_at        Int?
@@ -45,15 +46,19 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+
+  @@map(name: "account")
 }
 
 // Represents a Session--need this for NextAuth
 model Session {
   id           String   @id @default(cuid()) // primary key
-  sessionToken String   @unique
-  userId       String // foreign key
+  sessionToken String   @unique @map(name: "session_token")
+  userId       String  // foreign key
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map(name: "session")
 }
 
 // Represents a User--need this for NextAuth and the data it stores.
@@ -61,7 +66,7 @@ model User {
   id              String    @id @default(cuid()) // primary key
   name            String?
   email           String?   @unique
-  emailVerified   DateTime?
+  emailVerified   DateTime? @map(name: "email_verified")
   image           String?
   accounts        Account[] // can have multiple accounts
   sessions        Session[] // can have multiple settings
@@ -74,6 +79,8 @@ model User {
   companyCoordLat Float     @default(0) @map("company_coord_lat")
   startLocation   String    @default("") @map("start_location")
   isOnboarded     Boolean   @default(false) @map("is_onboarded")
+
+  @@map(name: "user")
 }
 
 // Represents a VerificationToken--need this for NextAuth.
@@ -83,4 +90,6 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  
+  @@map(name: "verification_token")
 }
