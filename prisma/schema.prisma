@@ -9,12 +9,14 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
+
 // Boilerplate--we would only change this if we wanted to change how 
 // the Prisma Client is generated.
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
 }
+
 
 // Represents a Role.
 enum Role {
@@ -90,6 +92,5 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-  
   @@map(name: "verification_token")
 }
