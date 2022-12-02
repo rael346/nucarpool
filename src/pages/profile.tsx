@@ -205,125 +205,37 @@ const Profile: NextPage = () => {
           className="w-full flex flex-col space-y-4"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="columns-2">
-            <div>
-              {/* Starting Location field  */}
-              <div className="flex flex-col space-y-2">
-                <label htmlFor="startlocation" className="font-medium text-sm">
-                  Starting Location
-                </label>
-                <p className="font-light text-xs text-gray-500">
-                  Note: Your address will only be used to find users close to
-                  you. It will not be displayed to any other users.
-                </p>
-                <Controller
-                  name="startLocation"
-                  control={control}
-                  render={({ field: { ref, ...fieldProps } }) => (
-                    <Combobox
-                      as="div"
-                      value={startLocationSelected}
-                      onChange={(val) => {
-                        setStartLocationSelected(val);
-                        fieldProps.onChange(val.place_name);
-                      }}
-                      ref={ref}
-                    >
-                      <Combobox.Input
-                        className={`w-full shadow-sm rounded-md px-3 py-2 ${
-                          errors.startLocation
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        }`}
-                        displayValue={(feat: any) =>
-                          feat.place_name ? feat.place_name : ""
-                        }
-                        type="text"
-                        onChange={(e) => {
-                          if (e.target.value === "") {
-                            setStartLocationSelected({ place_name: "" });
-                            fieldProps.onChange("");
-                          } else {
-                            updateStartingAddress(e.target.value);
-                          }
-                        }}
-                      />
-                      <Transition
-                        as={Fragment}
-                        leave="transition ease-in duration-100"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                      >
-                        <Combobox.Options className="w-full rounded-md bg-white text-base shadow-lg focus:outline-none ">
-                          {startLocationsuggestions.length === 0 ? (
-                            <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                              Nothing found.
-                            </div>
-                          ) : (
-                            startLocationsuggestions.map((feat: any) => (
-                              <Combobox.Option
-                                key={feat.id}
-                                className={({ active }) =>
-                                  `max-w-fit relative cursor-default select-none p-3 ${
-                                    active
-                                      ? "bg-blue-400 text-white"
-                                      : "text-gray-900"
-                                  }`
-                                }
-                                value={feat}
-                              >
-                                {feat.place_name}
-                              </Combobox.Option>
-                            ))
-                          )}
-                        </Combobox.Options>
-                      </Transition>
-                    </Combobox>
-                  )}
-                />
-                {errors.startLocation && (
-                  <p className="text-red-500 text-sm mt-2">
-                    {errors?.startLocation?.message}
-                  </p>
-                )}
-
-                <TextField
-                  label="Company Name"
-                  id="companyName"
-                  error={errors.companyName}
-                  type="text"
-                  {...register("companyName")}
-                />
-
-                {/* Company Address field  */}
-
+          <div className="flex flex-row space-x-40">
+            <div className="flex flex-col">
+              <div>
+                {/* Starting Location field  */}
                 <div className="flex flex-col space-y-2">
                   <label
-                    htmlFor="companyAddress"
+                    htmlFor="startlocation"
                     className="font-medium text-sm"
                   >
-                    Company Address
+                    Starting Location
                   </label>
                   <p className="font-light text-xs text-gray-500">
-                    Note: Select the autocomplete results, even if you typed the
-                    address out
+                    Note: Your address will only be used to find users close to
+                    you. It will not be displayed to any other users.
                   </p>
                   <Controller
-                    name="companyAddress"
+                    name="startLocation"
                     control={control}
                     render={({ field: { ref, ...fieldProps } }) => (
                       <Combobox
                         as="div"
-                        value={selected}
+                        value={startLocationSelected}
                         onChange={(val) => {
-                          setSelected(val);
+                          setStartLocationSelected(val);
                           fieldProps.onChange(val.place_name);
                         }}
                         ref={ref}
                       >
                         <Combobox.Input
                           className={`w-full shadow-sm rounded-md px-3 py-2 ${
-                            errors.companyAddress
+                            errors.startLocation
                               ? "border-red-500"
                               : "border-gray-300"
                           }`}
@@ -333,10 +245,10 @@ const Profile: NextPage = () => {
                           type="text"
                           onChange={(e) => {
                             if (e.target.value === "") {
-                              setSelected({ place_name: "" });
+                              setStartLocationSelected({ place_name: "" });
                               fieldProps.onChange("");
                             } else {
-                              updateCompanyAddress(e.target.value);
+                              updateStartingAddress(e.target.value);
                             }
                           }}
                         />
@@ -347,12 +259,12 @@ const Profile: NextPage = () => {
                           leaveTo="opacity-0"
                         >
                           <Combobox.Options className="w-full rounded-md bg-white text-base shadow-lg focus:outline-none ">
-                            {suggestions.length === 0 ? (
+                            {startLocationsuggestions.length === 0 ? (
                               <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                                 Nothing found.
                               </div>
                             ) : (
-                              suggestions.map((feat: any) => (
+                              startLocationsuggestions.map((feat: any) => (
                                 <Combobox.Option
                                   key={feat.id}
                                   className={({ active }) =>
@@ -373,63 +285,158 @@ const Profile: NextPage = () => {
                       </Combobox>
                     )}
                   />
-                  {errors.companyAddress && (
+                  {errors.startLocation && (
                     <p className="text-red-500 text-sm mt-2">
-                      {errors?.companyAddress?.message}
+                      {errors?.startLocation?.message}
                     </p>
                   )}
-                </div>
 
-                {/* Role field  */}
-                <div className="flex flex-col space-y-2">
-                  <h1 className="font-medium text-sm">Role</h1>
-                  <div className="flex space-x-4">
-                    <Radio
-                      label="Rider"
-                      id="rider"
-                      error={errors.role}
-                      value={Role.RIDER}
-                      {...register("role")}
+                  <TextField
+                    label="Company Name"
+                    id="companyName"
+                    error={errors.companyName}
+                    type="text"
+                    {...register("companyName")}
+                  />
+
+                  {/* Company Address field  */}
+
+                  <div className="flex flex-col space-y-2">
+                    <label
+                      htmlFor="companyAddress"
+                      className="font-medium text-sm"
+                    >
+                      Company Address
+                    </label>
+                    <p className="font-light text-xs text-gray-500">
+                      Note: Select the autocomplete results, even if you typed
+                      the address out
+                    </p>
+                    <Controller
+                      name="companyAddress"
+                      control={control}
+                      render={({ field: { ref, ...fieldProps } }) => (
+                        <Combobox
+                          as="div"
+                          value={selected}
+                          onChange={(val) => {
+                            setSelected(val);
+                            fieldProps.onChange(val.place_name);
+                          }}
+                          ref={ref}
+                        >
+                          <Combobox.Input
+                            className={`w-full shadow-sm rounded-md px-3 py-2 ${
+                              errors.companyAddress
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            }`}
+                            displayValue={(feat: any) =>
+                              feat.place_name ? feat.place_name : ""
+                            }
+                            type="text"
+                            onChange={(e) => {
+                              if (e.target.value === "") {
+                                setSelected({ place_name: "" });
+                                fieldProps.onChange("");
+                              } else {
+                                updateCompanyAddress(e.target.value);
+                              }
+                            }}
+                          />
+                          <Transition
+                            as={Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
+                            <Combobox.Options className="w-full rounded-md bg-white text-base shadow-lg focus:outline-none ">
+                              {suggestions.length === 0 ? (
+                                <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                                  Nothing found.
+                                </div>
+                              ) : (
+                                suggestions.map((feat: any) => (
+                                  <Combobox.Option
+                                    key={feat.id}
+                                    className={({ active }) =>
+                                      `max-w-fit relative cursor-default select-none p-3 ${
+                                        active
+                                          ? "bg-blue-400 text-white"
+                                          : "text-gray-900"
+                                      }`
+                                    }
+                                    value={feat}
+                                  >
+                                    {feat.place_name}
+                                  </Combobox.Option>
+                                ))
+                              )}
+                            </Combobox.Options>
+                          </Transition>
+                        </Combobox>
+                      )}
                     />
-                    <Radio
-                      label="Driver"
-                      id="driver"
-                      error={errors.role}
-                      value={Role.DRIVER}
-                      {...register("role")}
-                    />
-                    {watch("role") == Role.DRIVER && (
-                      <TextField
-                        label="Seat Availability"
-                        id="seatAvail"
-                        error={errors.seatAvail}
-                        type="number"
-                        {...register("seatAvail", { valueAsNumber: true })}
-                      />
+                    {errors.companyAddress && (
+                      <p className="text-red-500 text-sm mt-2">
+                        {errors?.companyAddress?.message}
+                      </p>
                     )}
+                  </div>
+
+                  {/* Role field  */}
+                  <div className="flex flex-col space-y-2">
+                    <h1 className="font-medium text-sm">Role</h1>
+                    <div className="flex space-x-4">
+                      <Radio
+                        label="Rider"
+                        id="rider"
+                        error={errors.role}
+                        value={Role.RIDER}
+                        {...register("role")}
+                      />
+                      <Radio
+                        label="Driver"
+                        id="driver"
+                        error={errors.role}
+                        value={Role.DRIVER}
+                        {...register("role")}
+                      />
+                      {watch("role") == Role.DRIVER && (
+                        <TextField
+                          label="Seat Availability"
+                          id="seatAvail"
+                          error={errors.seatAvail}
+                          type="number"
+                          {...register("seatAvail", { valueAsNumber: true })}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div>
-              {/* Preferred Name field  */}
-              <TextField
-                label="Preferred Name"
-                id="preferredName"
-                error={errors.preferredName}
-                type="text"
-                {...register("preferredName")}
-              />
+            <div className="flex flex-col">
+              <div className="flex flex-row space-x-6">
+                {/* Preferred Name field  */}
+                <TextField
+                  label="Preferred Name"
+                  id="preferredName"
+                  error={errors.preferredName}
+                  type="text"
+                  {...register("preferredName")}
+                />
 
-              {/* Pronouns field  */}
-              <TextField
-                label="Pronouns"
-                id="pronouns"
-                error={errors.pronouns}
-                type="text"
-                {...register("pronouns")}
-              />
+                {/* Pronouns field  */}
+                <TextField
+                  label="Pronouns"
+                  id="pronouns"
+                  error={errors.pronouns}
+                  type="text"
+                  {...register("pronouns")}
+                />
+              </div>
 
               {/* Days working field  */}
               <div>
@@ -475,7 +482,7 @@ const Profile: NextPage = () => {
               </div>
 
               {!watch("timeDiffers") && (
-                <div>
+                <div className="flex flex-row space-x-6">
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <Controller
                       name="startTime"
@@ -551,4 +558,4 @@ const Profile: NextPage = () => {
   );
 };
 
-export default Profile;
+export default ProtectedPage(Profile);
