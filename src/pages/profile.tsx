@@ -558,4 +558,4 @@ const Profile: NextPage = () => {
   );
 };
 
-export default ProtectedPage(Profile);
+export default Profile;
