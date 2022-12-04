@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#__next {
+  width: 100vw;
+  height: 100vh;
+}
