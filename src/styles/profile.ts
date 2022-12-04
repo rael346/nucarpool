@@ -24,3 +24,39 @@ export const ProfileContainer = styled.form`
   align-items: center;
   padding: 2rem 1.5rem;
 `;
+
+export const ProfileColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: 80%;
+  width: 50%;
+`;
+
+export const TopProfileSection = styled(ProfileColumn)`
+  height: 30%;
+  width: 100%;
+`;
+export const MiddleProfileSection = styled(ProfileColumn)`
+  height: 60%;
+  width: 100%;
+`;
+
+export const BottomProfileSection = styled(ProfileColumn)`
+  height: 10%;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const ProfileHeader = styled.h1`
+  display: flex;
+  font-family: "Lato", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 38px;
+  color: #000000;
+`;
