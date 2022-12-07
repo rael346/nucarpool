@@ -42,10 +42,12 @@ import {
   BottomProfileSection,
   CompleteProfileButton,
   MiddleProfileSection,
+  PersonalInfoSection,
   ProfileColumn,
   ProfileContainer,
   ProfileHeader,
   TopProfileSection,
+  CommutingScheduleSection,
 } from "../styles/profile";
 
 // Inputs to the onboarding form.
@@ -421,131 +423,137 @@ const Profile: NextPage = () => {
           </ProfileColumn>
 
           <ProfileColumn>
-            <div className="flex flex-row space-x-6">
-              {/* Preferred Name field  */}
-              <TextField
-                label="Preferred Name"
-                id="preferredName"
-                error={errors.preferredName}
-                type="text"
-                {...register("preferredName")}
-              />
-
-              {/* Pronouns field  */}
-              <TextField
-                label="Pronouns"
-                id="pronouns"
-                error={errors.pronouns}
-                type="text"
-                {...register("pronouns")}
-              />
-            </div>
-
-            {/* Days working field  */}
-            <div>
-              <h1 className="font-medium text-sm">Commuting Schedule</h1>
-              {daysOfWeek.map((day, index) => (
-                <Checkbox
-                  key={day + index.toString()}
-                  sx={{
-                    input: { width: 1, height: 1 },
-                    padding: 0,
-                  }}
-                  {...register(`daysWorking.${index}`)}
-                  checkedIcon={<DayBox day={day} isSelected={true} />}
-                  icon={<DayBox day={day} isSelected={false} />}
-                  defaultChecked={false}
-                />
-              ))}
-
-              {errors.daysWorking && (
-                <p className="text-red-500 text-sm mt-2">
-                  {(errors.daysWorking as unknown as FieldError).message}
-                </p>
-              )}
-            </div>
-
-            {/* Start/End Time Fields  */}
-
-            <div className="flex flex-col space-y-2">
-              <h1 className="font-medium text-sm">
-                My start/end time is different each day
-              </h1>
-              <div className="flex space-x-4">
-                <Checkbox {...register("timeDiffers")} />
-                <Tooltip
-                  title="If you don't have set times, communicate that on your own with potential riders/drivers."
-                  placement="right"
-                >
-                  <Icon>
-                    <MdHelp />
-                  </Icon>
-                </Tooltip>
-              </div>
-            </div>
-
-            {!watch("timeDiffers") && (
+            <PersonalInfoSection>
+              <ProfileHeader>Personal Info</ProfileHeader>
               <div className="flex flex-row space-x-6">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <Controller
-                    name="startTime"
-                    control={control}
-                    render={({ field: { ref, ...fieldProps } }) => (
-                      <TimePicker
-                        inputRef={ref}
-                        {...fieldProps}
-                        value={
-                          fieldProps.value ? dayjs(fieldProps.value) : null
-                        }
-                        onChange={(date) => {
-                          fieldProps.onChange(date?.toDate());
-                        }}
-                        label="Start Time"
-                        renderInput={function (props: TextFieldProps) {
-                          return (
-                            <MUITextField
-                              {...props}
-                              helperText={errors.startTime?.message}
-                              error={!!errors.startTime}
-                            />
-                          );
-                        }}
-                        disableOpenPicker
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <Controller
-                    name="endTime"
-                    control={control}
-                    render={({ field: { ref, ...fieldProps } }) => (
-                      <TimePicker
-                        inputRef={ref}
-                        {...fieldProps}
-                        value={
-                          fieldProps.value ? dayjs(fieldProps.value) : null
-                        }
-                        onChange={(date) => {
-                          fieldProps.onChange(date?.toDate());
-                        }}
-                        label="End Time"
-                        renderInput={function (props: TextFieldProps) {
-                          return (
-                            <MUITextField
-                              {...props}
-                              helperText={errors.endTime?.message}
-                              error={!!errors.endTime}
-                            />
-                          );
-                        }}
-                        disableOpenPicker
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
+                {/* Preferred Name field  */}
+                <TextField
+                  label="Preferred Name"
+                  id="preferredName"
+                  error={errors.preferredName}
+                  type="text"
+                  {...register("preferredName")}
+                />
+
+                {/* Pronouns field  */}
+                <TextField
+                  label="Pronouns"
+                  id="pronouns"
+                  error={errors.pronouns}
+                  type="text"
+                  {...register("pronouns")}
+                />
               </div>
-            )}
+            </PersonalInfoSection>
+
+            <CommutingScheduleSection>
+              <ProfileHeader>Commuting Schedule</ProfileHeader>
+              {/* Days working field  */}
+              <div>
+                <h1 className="font-medium text-sm">Commuting Schedule</h1>
+                {daysOfWeek.map((day, index) => (
+                  <Checkbox
+                    key={day + index.toString()}
+                    sx={{
+                      input: { width: 1, height: 1 },
+                      padding: 0,
+                    }}
+                    {...register(`daysWorking.${index}`)}
+                    checkedIcon={<DayBox day={day} isSelected={true} />}
+                    icon={<DayBox day={day} isSelected={false} />}
+                    defaultChecked={false}
+                  />
+                ))}
+
+                {errors.daysWorking && (
+                  <p className="text-red-500 text-sm mt-2">
+                    {(errors.daysWorking as unknown as FieldError).message}
+                  </p>
+                )}
+              </div>
+
+              {/* Start/End Time Fields  */}
+
+              <div className="flex flex-col space-y-2">
+                <h1 className="font-medium text-sm">
+                  My start/end time is different each day
+                </h1>
+                <div className="flex space-x-4">
+                  <Checkbox {...register("timeDiffers")} />
+                  <Tooltip
+                    title="If you don't have set times, communicate that on your own with potential riders/drivers."
+                    placement="right"
+                  >
+                    <Icon>
+                      <MdHelp />
+                    </Icon>
+                  </Tooltip>
+                </div>
+              </div>
+
+              {!watch("timeDiffers") && (
+                <div className="flex flex-row space-x-6">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <Controller
+                      name="startTime"
+                      control={control}
+                      render={({ field: { ref, ...fieldProps } }) => (
+                        <TimePicker
+                          inputRef={ref}
+                          {...fieldProps}
+                          value={
+                            fieldProps.value ? dayjs(fieldProps.value) : null
+                          }
+                          onChange={(date) => {
+                            fieldProps.onChange(date?.toDate());
+                          }}
+                          label="Start Time"
+                          renderInput={function (props: TextFieldProps) {
+                            return (
+                              <MUITextField
+                                {...props}
+                                helperText={errors.startTime?.message}
+                                error={!!errors.startTime}
+                              />
+                            );
+                          }}
+                          disableOpenPicker
+                        />
+                      )}
+                    />
+                  </LocalizationProvider>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <Controller
+                      name="endTime"
+                      control={control}
+                      render={({ field: { ref, ...fieldProps } }) => (
+                        <TimePicker
+                          inputRef={ref}
+                          {...fieldProps}
+                          value={
+                            fieldProps.value ? dayjs(fieldProps.value) : null
+                          }
+                          onChange={(date) => {
+                            fieldProps.onChange(date?.toDate());
+                          }}
+                          label="End Time"
+                          renderInput={function (props: TextFieldProps) {
+                            return (
+                              <MUITextField
+                                {...props}
+                                helperText={errors.endTime?.message}
+                                error={!!errors.endTime}
+                              />
+                            );
+                          }}
+                          disableOpenPicker
+                        />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </div>
+              )}
+            </CommutingScheduleSection>
           </ProfileColumn>
         </div>
         <CompleteProfileButton type="submit">

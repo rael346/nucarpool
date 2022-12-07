@@ -38,6 +38,7 @@ export const TopProfileSection = styled(ProfileColumn)`
   height: 30%;
   width: 100%;
 `;
+
 export const MiddleProfileSection = styled(ProfileColumn)`
   height: 60%;
   width: 100%;
@@ -49,6 +50,16 @@ export const BottomProfileSection = styled(ProfileColumn)`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+`;
+
+export const PersonalInfoSection = styled(ProfileColumn)`
+  height: 50%;
+  width: 100%;
+`;
+
+export const CommutingScheduleSection = styled(ProfileColumn)`
+  height: 50%;
+  width: 100%;
 `;
 
 export const ProfileHeader = styled.h1`
