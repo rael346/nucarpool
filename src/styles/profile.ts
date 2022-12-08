@@ -71,3 +71,22 @@ export const ProfileHeader = styled.h1`
   line-height: 38px;
   color: #000000;
 `;
+
+export const EntryLabel = styled.label<{
+  error?: boolean;
+}>`
+  font-family: 'Lato', sans-serif;
+  font-s  yle: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+  color: ${(props) => (props.error ? "#B12424" : "#000000")};
+`;
+
+export const EntryRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;

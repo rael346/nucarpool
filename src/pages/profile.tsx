@@ -48,6 +48,8 @@ import {
   ProfileHeader,
   TopProfileSection,
   CommutingScheduleSection,
+  EntryLabel,
+  EntryRow,
 } from "../styles/profile";
 
 // Inputs to the onboarding form.
@@ -61,7 +63,7 @@ type OnboardingFormInputs = {
   pronouns: string;
   daysWorking: boolean[];
   startTime?: Date;
-  endTime?: string;
+  endTime?: Date;
   timeDiffers: boolean;
 };
 
@@ -121,7 +123,7 @@ const Profile: NextPage = () => {
       pronouns: "",
       daysWorking: [false, false, false, false, false, false, false],
       startTime: undefined,
-      endTime: "",
+      endTime: undefined,
       timeDiffers: false,
     },
     resolver: zodResolver(onboardSchema),
@@ -204,7 +206,7 @@ const Profile: NextPage = () => {
       pronouns: userInfo.pronouns,
       daysWorking: daysWorkingParsed,
       startTime: userInfo.startTime?.toISOString(),
-      endTime: userInfo.endTime,
+      endTime: userInfo.endTime?.toISOString(),
     });
   };
 
@@ -218,12 +220,12 @@ const Profile: NextPage = () => {
         <div className="flex flex-row space-x-40 h-full">
           <ProfileColumn>
             <TopProfileSection>
-              <ProfileHeader> Starting Location</ProfileHeader>
+              <ProfileHeader>Starting Location</ProfileHeader>
               {/* Starting Location field  */}
 
-              <label htmlFor="startlocation" className="font-medium text-sm">
+              <EntryLabel error={!!errors.startLocation}>
                 Home Address
-              </label>
+              </EntryLabel>
               <p className="font-light text-xs text-gray-500">
                 Note: Your address will only be used to find users close to you.
                 It will not be displayed to any other users.
@@ -450,7 +452,6 @@ const Profile: NextPage = () => {
               <ProfileHeader>Commuting Schedule</ProfileHeader>
               {/* Days working field  */}
               <div>
-                <h1 className="font-medium text-sm">Commuting Schedule</h1>
                 {daysOfWeek.map((day, index) => (
                   <Checkbox
                     key={day + index.toString()}
@@ -475,11 +476,19 @@ const Profile: NextPage = () => {
               {/* Start/End Time Fields  */}
 
               <div className="flex flex-col space-y-2">
-                <h1 className="font-medium text-sm">
-                  My start/end time is different each day
-                </h1>
-                <div className="flex space-x-4">
-                  <Checkbox {...register("timeDiffers")} />
+                <EntryRow>
+                  <Checkbox
+                    {...register("timeDiffers")}
+                    sx={{
+                      input: {
+                        width: "100%",
+                        height: "100%",
+                      },
+                    }}
+                  />
+                  <h1 className="font-medium text-sm">
+                    My start/end time is different each day
+                  </h1>
                   <Tooltip
                     title="If you don't have set times, communicate that on your own with potential riders/drivers."
                     placement="right"
@@ -488,7 +497,7 @@ const Profile: NextPage = () => {
                       <MdHelp />
                     </Icon>
                   </Tooltip>
-                </div>
+                </EntryRow>
               </div>
 
               {!watch("timeDiffers") && (
