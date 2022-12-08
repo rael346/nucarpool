@@ -429,13 +429,18 @@ const Profile: NextPage = () => {
               <ProfileHeader>Personal Info</ProfileHeader>
               <div className="flex flex-row space-x-6">
                 {/* Preferred Name field  */}
-                <TextField
-                  label="Preferred Name"
-                  id="preferredName"
-                  error={errors.preferredName}
-                  type="text"
-                  {...register("preferredName")}
-                />
+                <div className="flex flex-col space-x-6">
+                  <EntryLabel error={!!errors.preferredName}>
+                    Preferred Name
+                  </EntryLabel>
+                  <TextField
+                    // label="Preferred Name"
+                    id="preferredName"
+                    error={errors.preferredName}
+                    type="text"
+                    {...register("preferredName")}
+                  />
+                </div>
 
                 {/* Pronouns field  */}
                 <TextField
