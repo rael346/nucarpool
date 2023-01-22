@@ -425,34 +425,6 @@ const Profile: NextPage = () => {
           </ProfileColumn>
 
           <ProfileColumn>
-            <PersonalInfoSection>
-              <ProfileHeader>Personal Info</ProfileHeader>
-              <div className="flex flex-row space-x-6">
-                {/* Preferred Name field  */}
-                <div className="flex flex-col space-x-6">
-                  <EntryLabel error={!!errors.preferredName}>
-                    Preferred Name
-                  </EntryLabel>
-                  <TextField
-                    // label="Preferred Name"
-                    id="preferredName"
-                    error={errors.preferredName}
-                    type="text"
-                    {...register("preferredName")}
-                  />
-                </div>
-
-                {/* Pronouns field  */}
-                <TextField
-                  label="Pronouns"
-                  id="pronouns"
-                  error={errors.pronouns}
-                  type="text"
-                  {...register("pronouns")}
-                />
-              </div>
-            </PersonalInfoSection>
-
             <CommutingScheduleSection>
               <ProfileHeader>Commuting Schedule</ProfileHeader>
               {/* Days working field  */}
@@ -568,6 +540,35 @@ const Profile: NextPage = () => {
                 </div>
               )}
             </CommutingScheduleSection>
+
+            <PersonalInfoSection>
+              <ProfileHeader>Personal Info</ProfileHeader>
+              <div className="flex flex-row space-x-6">
+                {/* Preferred Name field  */}
+                <div className="flex flex-col space-x-6">
+                  <EntryLabel error={!!errors.preferredName}>
+                    Preferred Name
+                  </EntryLabel>
+                  <TextField
+                    // label="Preferred Name"
+                    id="preferredName"
+                    error={errors.preferredName}
+                    type="text"
+                    {...register("preferredName")}
+                  />
+                </div>
+
+                {/* Pronouns field  */}
+                <TextField
+                  label="Pronouns"
+                  id="pronouns"
+                  error={errors.pronouns}
+                  type="text"
+                  {...register("pronouns")}
+                />
+              </div>
+              <TextField label="Intro" id="intro" type="text" />
+            </PersonalInfoSection>
           </ProfileColumn>
         </div>
         <CompleteProfileButton type="submit">
