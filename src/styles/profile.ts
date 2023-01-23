@@ -28,7 +28,6 @@ export const ProfileContainer = styled.form`
 export const ProfileColumn = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: flex-start;
   height: 90%;
   width: 50%;
@@ -70,6 +69,7 @@ export const ProfileHeader = styled.h1`
   font-size: 32px;
   line-height: 38px;
   color: #000000;
+  margin-bottom: 27px;
 `;
 
 export const EntryLabel = styled.label<{
@@ -83,6 +83,7 @@ export const EntryLabel = styled.label<{
   display: flex;
   align-items: center;
   color: ${(props) => (props.error ? "#B12424" : "#000000")};
+  margin-bottom: 4px;
 `;
 
 export const EntryRow = styled.div`
