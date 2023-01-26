@@ -205,7 +205,7 @@ const Profile: NextPage = () => {
         className="w-full flex flex-col space-y-4"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="flex flex-row space-x-40 h-full">
+        <div className="flex flex-col h-full md:flex-row md:space-x-40">
           <ProfileColumn>
             <TopProfileSection>
               <ProfileHeader>Starting Location</ProfileHeader>
@@ -214,15 +214,13 @@ const Profile: NextPage = () => {
               <EntryLabel error={!!errors.startLocation}>
                 Home Address
               </EntryLabel>
-              <p className="font-light text-xs text-gray-500">
-                Note: Your address will only be used to find users close to you.
-                It will not be displayed to any other users.
-              </p>
+
               <Controller
                 name="startLocation"
                 control={control}
                 render={({ field: { ref, ...fieldProps } }) => (
                   <Combobox
+                    className={`w-full`}
                     as="div"
                     value={startLocationSelected}
                     onChange={(val) => {
@@ -283,6 +281,10 @@ const Profile: NextPage = () => {
                   </Combobox>
                 )}
               />
+              <p className="font-light text-xs text-gray-500">
+                Note: Your address will only be used to find users close to you.
+                It will not be displayed to any other users.
+              </p>
               {errors.startLocation && (
                 <p className="text-red-500 text-sm mt-2">
                   {errors?.startLocation?.message}
@@ -293,6 +295,7 @@ const Profile: NextPage = () => {
             <MiddleProfileSection>
               <ProfileHeader> Destination </ProfileHeader>
               <TextField
+                className={`w-full mb-6`}
                 label="Workplace Name"
                 id="companyName"
                 error={errors.companyName}
@@ -314,6 +317,7 @@ const Profile: NextPage = () => {
                 control={control}
                 render={({ field: { ref, ...fieldProps } }) => (
                   <Combobox
+                    className={`w-full`}
                     as="div"
                     value={selected}
                     onChange={(val) => {
@@ -416,7 +420,7 @@ const Profile: NextPage = () => {
             <CommutingScheduleSection>
               <ProfileHeader>Commuting Schedule</ProfileHeader>
               {/* Days working field  */}
-              <div>
+              <div className="my-4 border-l-2 border-l-black">
                 {daysOfWeek.map((day, index) => (
                   <Checkbox
                     key={day + index.toString()}
@@ -445,6 +449,7 @@ const Profile: NextPage = () => {
                   <Checkbox
                     {...register("timeDiffers")}
                     sx={{
+                      padding: 0,
                       input: {
                         width: "100%",
                         height: "100%",
@@ -475,14 +480,13 @@ const Profile: NextPage = () => {
 
             <PersonalInfoSection>
               <ProfileHeader>Personal Info</ProfileHeader>
-              <div className="flex flex-row space-x-6">
+              <div className="flex flex-row space-x-6 w-full">
                 {/* Preferred Name field  */}
-                <div className="flex flex-col space-x-6">
+                <div className="flex flex-col w-3/5">
                   <EntryLabel error={!!errors.preferredName}>
                     Preferred Name
                   </EntryLabel>
                   <TextField
-                    // label="Preferred Name"
                     id="preferredName"
                     error={errors.preferredName}
                     type="text"
@@ -492,6 +496,7 @@ const Profile: NextPage = () => {
 
                 {/* Pronouns field  */}
                 <TextField
+                  className="w-2/5"
                   label="Pronouns"
                   id="pronouns"
                   error={errors.pronouns}
@@ -499,7 +504,19 @@ const Profile: NextPage = () => {
                   {...register("pronouns")}
                 />
               </div>
-              <TextField label="Intro" id="intro" type="text" />
+              <label htmlFor="intro" className="font-medium text-md">
+                Intro
+              </label>
+              <p className="font-light text-xs text-gray-500 pb-0.5">
+                Note: This intro will be shared with people you choose to
+                connect with.
+              </p>
+              <TextField
+                className="w-full"
+                id="intro"
+                type="text"
+                charLimit={300}
+              />
             </PersonalInfoSection>
           </ProfileColumn>
         </div>
