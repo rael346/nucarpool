@@ -572,11 +572,18 @@ const Profile: NextPage = () => {
                   {...register("pronouns")}
                 />
               </div>
+              <label htmlFor="intro" className="font-medium text-md">
+                Intro
+              </label>
+              <p className="font-light text-xs text-gray-500 pb-0.5">
+                Note: This intro will be shared with people you choose to
+                connect with.
+              </p>
               <TextField
                 className="w-full"
-                label="Intro"
                 id="intro"
                 type="text"
+                charLimit={300}
               />
             </PersonalInfoSection>
           </ProfileColumn>
