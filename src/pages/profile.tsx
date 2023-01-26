@@ -15,29 +15,17 @@ import {
 import { Controller, FieldError, NestedValue, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
-import { unstable_getServerSession as getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
-import Head from "next/head";
 import { array, z } from "zod";
 import { trpc } from "../utils/trpc";
 import { Role, Status } from "@prisma/client";
 import { TextField } from "../components/TextField";
 import Radio from "../components/Radio";
 import useSearch from "../utils/search";
-import ProtectedPage from "../utils/auth";
-import ControlledTextbox from "../components/ControlledTextbox";
-import ControlledCheckbox from "../components/ControlledTextbox";
 import Checkbox from "@mui/material/Checkbox";
-import { time } from "console";
 import DayBox from "../components/DayBox";
+import { TimePicker } from "antd";
 import { Tooltip, Icon, TextFieldProps } from "@mui/material";
 import { MdHelp } from "react-icons/md";
-import StaticTimePicker from "@mui/x-date-pickers/StaticTimePicker";
-import { TimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TextField as MUITextField } from "@mui/material";
-import dayjs, { Dayjs } from "dayjs";
 import {
   BottomProfileSection,
   CompleteProfileButton,
@@ -477,68 +465,12 @@ const Profile: NextPage = () => {
                 </EntryRow>
               </div>
 
-              {!watch("timeDiffers") && (
-                <div className="flex flex-row space-x-6">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <Controller
-                      name="startTime"
-                      control={control}
-                      render={({ field: { ref, ...fieldProps } }) => (
-                        <TimePicker
-                          inputRef={ref}
-                          {...fieldProps}
-                          value={
-                            fieldProps.value ? dayjs(fieldProps.value) : null
-                          }
-                          onChange={(date) => {
-                            fieldProps.onChange(date?.toDate());
-                          }}
-                          label="Start Time"
-                          renderInput={function (props: TextFieldProps) {
-                            return (
-                              <MUITextField
-                                {...props}
-                                helperText={errors.startTime?.message}
-                                error={!!errors.startTime}
-                              />
-                            );
-                          }}
-                          disableOpenPicker
-                        />
-                      )}
-                    />
-                  </LocalizationProvider>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <Controller
-                      name="endTime"
-                      control={control}
-                      render={({ field: { ref, ...fieldProps } }) => (
-                        <TimePicker
-                          inputRef={ref}
-                          {...fieldProps}
-                          value={
-                            fieldProps.value ? dayjs(fieldProps.value) : null
-                          }
-                          onChange={(date) => {
-                            fieldProps.onChange(date?.toDate());
-                          }}
-                          label="End Time"
-                          renderInput={function (props: TextFieldProps) {
-                            return (
-                              <MUITextField
-                                {...props}
-                                helperText={errors.endTime?.message}
-                                error={!!errors.endTime}
-                              />
-                            );
-                          }}
-                          disableOpenPicker
-                        />
-                      )}
-                    />
-                  </LocalizationProvider>
-                </div>
-              )}
+              <TimePicker.RangePicker
+                format="HH:mm"
+                minuteStep={15}
+                order={true}
+                use12Hours={true}
+              />
             </CommutingScheduleSection>
 
             <PersonalInfoSection>
