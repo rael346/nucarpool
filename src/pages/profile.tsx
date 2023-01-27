@@ -516,6 +516,7 @@ const Profile: NextPage = () => {
                 id="intro"
                 type="text"
                 charLimit={300}
+                multiline={true}
               />
             </PersonalInfoSection>
           </ProfileColumn>
