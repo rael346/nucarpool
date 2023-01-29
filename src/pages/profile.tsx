@@ -39,6 +39,7 @@ import {
   EntryLabel,
   EntryRow,
 } from "../styles/profile";
+import dayjs from "dayjs";
 
 // Inputs to the onboarding form.
 type OnboardingFormInputs = {
@@ -470,12 +471,44 @@ const Profile: NextPage = () => {
                 </EntryRow>
               </div>
 
-              <TimePicker.RangePicker
-                format="HH:mm"
-                minuteStep={15}
-                order={true}
-                use12Hours={true}
-              />
+              <div>
+                <Controller
+                  name="startTime"
+                  control={control}
+                  render={({ field: { ref, ...fieldProps } }) => (
+                    <TimePicker
+                      format="HH:mm"
+                      placeholder="Start time"
+                      showNow={false}
+                      minuteStep={15}
+                      value={fieldProps.value ? dayjs(fieldProps.value) : null}
+                      use12Hours={true}
+                      // Do we want default values?
+                      onSelect={(value) => {
+                        fieldProps.onChange(value?.toDate());
+                      }}
+                    />
+                  )}
+                />
+                <Controller
+                  name="endTime"
+                  control={control}
+                  render={({ field: { ref, ...fieldProps } }) => (
+                    <TimePicker
+                      format="HH:mm"
+                      placeholder="End time"
+                      showNow={false}
+                      minuteStep={15}
+                      value={fieldProps.value ? dayjs(fieldProps.value) : null}
+                      use12Hours={true}
+                      // Do we want default values?
+                      onSelect={(value) => {
+                        fieldProps.onChange(value?.toDate());
+                      }}
+                    />
+                  )}
+                />
+              </div>
             </CommutingScheduleSection>
 
             <PersonalInfoSection>
