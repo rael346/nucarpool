@@ -50,7 +50,7 @@ type OnboardingFormInputs = {
   pronouns: string;
   daysWorking: boolean[];
   startTime?: Date;
-  endTime?: string;
+  endTime?: Date;
   timeDiffers: boolean;
 };
 
@@ -110,7 +110,7 @@ const Profile: NextPage = () => {
       pronouns: "",
       daysWorking: [false, false, false, false, false, false, false],
       startTime: undefined,
-      endTime: "",
+      endTime: undefined,
       timeDiffers: false,
     },
     resolver: zodResolver(onboardSchema),
@@ -163,8 +163,8 @@ const Profile: NextPage = () => {
       ...values,
       companyCoordLng: coord[0],
       companyCoordLat: coord[1],
-      startCoordLat: startCoord[0],
-      startCoordLng: startCoord[1],
+      startCoordLng: startCoord[0],
+      startCoordLat: startCoord[1],
       seatAvail: values.role === Role.RIDER ? 0 : values.seatAvail,
     };
 
@@ -193,7 +193,7 @@ const Profile: NextPage = () => {
       pronouns: userInfo.pronouns,
       daysWorking: daysWorkingParsed,
       startTime: userInfo.startTime?.toISOString(),
-      endTime: userInfo.endTime,
+      endTime: userInfo.endTime?.toISOString(),
     });
   };
 
