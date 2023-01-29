@@ -477,7 +477,7 @@ const Profile: NextPage = () => {
                   control={control}
                   render={({ field: { ref, ...fieldProps } }) => (
                     <TimePicker
-                      format="HH:mm"
+                      format="h:mm A"
                       placeholder="Start time"
                       showNow={false}
                       minuteStep={15}
@@ -494,7 +494,7 @@ const Profile: NextPage = () => {
                   control={control}
                   render={({ field: { ref, ...fieldProps } }) => (
                     <TimePicker
-                      format="HH:mm"
+                      format="h:mm A"
                       placeholder="End time"
                       showNow={false}
                       minuteStep={15}
