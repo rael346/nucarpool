@@ -483,7 +483,6 @@ const Profile: NextPage = () => {
                       minuteStep={15}
                       value={fieldProps.value ? dayjs(fieldProps.value) : null}
                       use12Hours={true}
-                      // Do we want default values?
                       onSelect={(value) => {
                         fieldProps.onChange(value?.toDate());
                       }}
@@ -501,7 +500,6 @@ const Profile: NextPage = () => {
                       minuteStep={15}
                       value={fieldProps.value ? dayjs(fieldProps.value) : null}
                       use12Hours={true}
-                      // Do we want default values?
                       onSelect={(value) => {
                         fieldProps.onChange(value?.toDate());
                       }}

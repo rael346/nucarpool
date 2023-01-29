@@ -6,26 +6,26 @@ const StyledCheckedBox = styled.div`
   border: 2px solid black;
   border-left: 0rem solid;
   color: white;
-  width: 4rem;
-  height: 4rem;
+  width: 2.5rem;
+  height: 2.5rem;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1rem;
 `;
 
 const StyledUncheckedBox = styled.div`
   border: 2px solid black;
   border-left: 0rem solid;
   color: black;
-  width: 4rem;
-  height: 4rem;
+  width: 2.5rem;
+  height: 2.5rem;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1rem;
 `;
 
 const DayBox = ({

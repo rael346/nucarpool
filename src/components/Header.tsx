@@ -10,7 +10,7 @@ const HeaderDiv = styled.div`
   background-color: #b12424;
   padding: 0 40px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
-  height: 15%;
+  height: 10%;
 `;
 
 const Logo = styled.h1`
@@ -18,7 +18,7 @@ const Logo = styled.h1`
   height: 111px;
   font-style: normal;
   font-weight: 700;
-  font-size: 64px;
+  font-size: 48px;
   line-height: 77px;
   display: flex;
   align-items: center;
