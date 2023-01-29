@@ -6,6 +6,7 @@ import { Role, User } from "@prisma/client";
 import { Status } from "@prisma/client";
 import { Feature, FeatureCollection } from "geojson";
 import calculateScore, { Recommendation } from "../../utils/recommendation";
+import { asPublicUser, PublicUser } from "../../utils/publicUser";
 import _ from "lodash";
 
 // user router to get information about or edit users
@@ -127,12 +128,14 @@ export const userRouter = createProtectedRouter()
           status: Status.ACTIVE, // only include active users
         },
       });
+
       const recs = _.compact(users.map(calculateScore(currentUser)));
       recs.sort((a, b) => a.score - b.score);
       const sortedUsers = _.compact(
-        recs.map((rec) => users.find((user) => user.id === rec.id))
+        recs.map((rec) =>
+          asPublicUser(users.find((user) => user.id === rec.id))
+        )
       );
-      return sortedUsers;
     },
   })
   // Returns the list of favorites for the curent user
