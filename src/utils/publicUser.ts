@@ -23,7 +23,7 @@ export type PublicUser = {
   startLocation: string;
   startPOICoordLng: number;
   startPOICoordLat: number;
-  companyPOILocation: string;
+  companyPOIAddress: string;
   companyPOICoordLng: number;
   companyPOICoordLat: number;
   daysWorking: string;
@@ -31,7 +31,7 @@ export type PublicUser = {
   endTime: Date | null;
 };
 
-export const asPublicUser = (user?: User): PublicUser | null => {
+export const toPublicUser = (user?: User): PublicUser | null => {
   if (!user) return null;
   return {
     name: user.name,
@@ -50,7 +50,7 @@ export const asPublicUser = (user?: User): PublicUser | null => {
     startLocation: user.startLocation,
     startPOICoordLng: user.startPOICoordLng,
     startPOICoordLat: user.startPOICoordLat,
-    companyPOILocation: user.companyPOILocation,
+    companyPOIAddress: user.companyPOIAddress,
     companyPOICoordLng: user.companyPOICoordLng,
     companyPOICoordLat: user.companyPOICoordLat,
   };

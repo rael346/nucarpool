@@ -6,7 +6,7 @@ import { Role, User } from "@prisma/client";
 import { Status } from "@prisma/client";
 import { Feature, FeatureCollection } from "geojson";
 import calculateScore, { Recommendation } from "../../utils/recommendation";
-import { asPublicUser, PublicUser } from "../../utils/publicUser";
+import { toPublicUser, PublicUser } from "../../utils/publicUser";
 import _ from "lodash";
 
 // user router to get information about or edit users
@@ -133,7 +133,8 @@ export const userRouter = createProtectedRouter()
       recs.sort((a, b) => a.score - b.score);
       const sortedUsers = _.compact(
         recs.map((rec) =>
-          asPublicUser(users.find((user) => user.id === rec.id))
+          // TODO: is this necessary?  toPublicUser(
+          users.find((user) => user.id === rec.id)
         )
       );
     },
@@ -142,12 +143,13 @@ export const userRouter = createProtectedRouter()
   .query("favorites", {
     async resolve({ ctx }) {
       const id = ctx.session.user?.id;
-      const favorites = await ctx.prisma.user.findUnique({
-        where: { id },
-        select: {
-          favorites: true,
-        },
-      });
+      const { favorites } =
+        (await ctx.prisma.user.findUnique({
+          where: { id },
+          select: {
+            favorites: true,
+          },
+        })) || {};
 
       // throws TRPCError if no user with ID exists
       if (!favorites) {
@@ -158,5 +160,7 @@ export const userRouter = createProtectedRouter()
       }
 
       return favorites;
+      // TODO: is this necessary?
+      //.map(toPublicUser);
     },
   });
