@@ -143,11 +143,15 @@ const genRandomUsers = ({
       startTime:
         8 + Math.floor(rand(3)) + ":" + (startMin == 0 ? "00" : startMin),
       startCoordLat: startCoordLat - coordOffset + rand(doubleOffset),
+      startPOICoordLat: startCoordLat,
       startCoordLng: startCoordLng - coordOffset + rand(doubleOffset),
+      startPOICoordLng: startCoordLat,
       // Generates an end time between 16:00 - 19:45
       endTime: 16 + Math.floor(rand(3)) + ":" + (endMin == 0 ? "00" : endMin),
       companyCoordLat: companyCoordLat - coordOffset + rand(doubleOffset),
+      companyPOICoordLat: companyCoordLat,
       companyCoordLng: companyCoordLng - coordOffset + rand(doubleOffset),
+      companyPOICoordLng: companyCoordLng,
       daysWorking: new Array(7)
         .fill(undefined)
         .map((_, ind) => (rand(1) < 0.5 ? "0" : "1"))

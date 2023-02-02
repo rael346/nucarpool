@@ -128,9 +128,13 @@ export type GenerateUserInput = {
   role: Role;
   seatAvail?: number;
   companyCoordLng: number;
+  companyPOICoordLng: number;
   companyCoordLat: number;
+  companyPOICoordLat: number;
   startCoordLng: number;
+  startPOICoordLng: number;
   startCoordLat: number;
+  startPOICoordLat: number;
   daysWorking: string; // Format: S,M,T,W,R,F,S
   startTime: string;
   endTime: string;
