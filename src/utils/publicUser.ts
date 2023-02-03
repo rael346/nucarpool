@@ -8,10 +8,9 @@ type POIData = {
 
 // descripes a user's public data along with their IPO's
 export type PublicUser = {
-  //id: string
+  id: string;
   name: string | null;
   email: string | null;
-  //emailVerified: Date | null
   image: string | null;
   bio: string;
   preferredName: string;
@@ -20,7 +19,7 @@ export type PublicUser = {
   status: Status;
   seatAvail: number;
   companyName: string;
-  startLocation: string;
+  startPOILocation: string;
   startPOICoordLng: number;
   startPOICoordLat: number;
   companyPOIAddress: string;
@@ -34,6 +33,7 @@ export type PublicUser = {
 export const toPublicUser = (user?: User): PublicUser | null => {
   if (!user) return null;
   return {
+    id: user.id,
     name: user.name,
     email: user.email,
     image: user.image,
@@ -47,7 +47,7 @@ export const toPublicUser = (user?: User): PublicUser | null => {
     daysWorking: user.daysWorking,
     startTime: user.startTime,
     endTime: user.endTime,
-    startLocation: user.startLocation,
+    startPOILocation: user.startPOILocation,
     startPOICoordLng: user.startPOICoordLng,
     startPOICoordLat: user.startPOICoordLat,
     companyPOIAddress: user.companyPOIAddress,

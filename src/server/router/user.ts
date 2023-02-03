@@ -133,8 +133,7 @@ export const userRouter = createProtectedRouter()
       recs.sort((a, b) => a.score - b.score);
       const sortedUsers = _.compact(
         recs.map((rec) =>
-          // TODO: is this necessary?  toPublicUser(
-          users.find((user) => user.id === rec.id)
+          toPublicUser(users.find((user) => user.id === rec.id))
         )
       );
     },
@@ -159,8 +158,6 @@ export const userRouter = createProtectedRouter()
         });
       }
 
-      return favorites;
-      // TODO: is this necessary?
-      //.map(toPublicUser);
+      return favorites.map(toPublicUser);
     },
   });
