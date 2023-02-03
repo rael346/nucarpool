@@ -10,16 +10,27 @@ import superjson from "superjson";
 import { loggerLink } from "@trpc/client/links/loggerLink";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import { TRPCError } from "@trpc/server";
+import Head from "next/head";
 
 function MyApp({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps<{ session: Session }>) {
   return (
-    <SessionProvider session={session} refetchOnWindowFocus={false}>
-      <Component {...pageProps} />
-      <ToastContainer />
-    </SessionProvider>
+    <>
+      <Head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Lato&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+      <SessionProvider session={session} refetchOnWindowFocus={false}>
+        <Component {...pageProps} />
+        <ToastContainer />
+      </SessionProvider>
+    </>
   );
 }
 
