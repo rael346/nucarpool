@@ -1,4 +1,6 @@
 import { Role, Status, User } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
+import { serverEnv } from "./env/server";
 
 type POIData = {
   location: string;
@@ -30,8 +32,7 @@ export type PublicUser = {
   endTime: Date | null;
 };
 
-export const toPublicUser = (user?: User): PublicUser | null => {
-  if (!user) return null;
+export const toPublicUser = (user: User): PublicUser => {
   return {
     id: user.id,
     name: user.name,
@@ -56,11 +57,24 @@ export const toPublicUser = (user?: User): PublicUser | null => {
   };
 };
 
-const ipoData = (longitude: number, latitude: number): POIData => {
-  // TODO: Make API calls to the MapBox here
+export const ipoData = async (
+  longitude: number,
+  latitude: number
+): Promise<POIData> => {
+  const endpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude}, ${latitude}.json?types=poi,locality&access_token=${serverEnv.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`;
+  const data = await fetch(endpoint)
+    .then((response) => response.json())
+    .catch((err) => {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Unexpected error. Please try again.",
+        cause: err,
+      });
+    });
+
   return {
-    location: "Northeastern University",
-    coordLng: 0,
-    coordLat: 0,
+    location: data.features[0]?.properties.address || "NOT FOUND",
+    coordLng: data.features[0]?.center[0] ?? -999,
+    coordLat: data.features[0]?.center[1] ?? -999,
   };
 };

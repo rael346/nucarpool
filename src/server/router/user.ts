@@ -6,7 +6,7 @@ import { Role, User } from "@prisma/client";
 import { Status } from "@prisma/client";
 import { Feature, FeatureCollection } from "geojson";
 import calculateScore, { Recommendation } from "../../utils/recommendation";
-import { toPublicUser, PublicUser } from "../../utils/publicUser";
+import { toPublicUser, PublicUser, ipoData } from "../../utils/publicUser";
 import _ from "lodash";
 
 // user router to get information about or edit users
@@ -32,6 +32,12 @@ export const userRouter = createProtectedRouter()
           startCoordLng: true,
           startCoordLat: true,
           startLocation: true,
+          companyPOIAddress: true,
+          companyPOICoordLng: true,
+          companyPOICoordLat: true,
+          startPOICoordLng: true,
+          startPOICoordLat: true,
+          startPOILocation: true,
           preferredName: true,
           pronouns: true,
           daysWorking: true,
@@ -78,6 +84,10 @@ export const userRouter = createProtectedRouter()
       const endTimeDate = input.endTime
         ? new Date(Date.parse(input.endTime))
         : undefined;
+      const [startPOIData, endPOIData] = await Promise.all([
+        ipoData(input.startCoordLng, input.startCoordLat),
+        ipoData(input.companyCoordLng, input.companyCoordLat),
+      ]);
 
       const id = ctx.session.user?.id;
       const user = await ctx.prisma.user.update({
@@ -92,6 +102,12 @@ export const userRouter = createProtectedRouter()
           companyCoordLat: input.companyCoordLat,
           startCoordLng: input.startCoordLng,
           startCoordLat: input.startCoordLat,
+          startPOILocation: startPOIData.location,
+          startPOICoordLng: startPOIData.coordLng,
+          startPOICoordLat: startPOIData.coordLat,
+          companyPOIAddress: endPOIData.location,
+          companyPOICoordLng: endPOIData.coordLng,
+          companyPOICoordLat: endPOIData.coordLat,
           preferredName: input.preferredName,
           pronouns: input.pronouns,
           isOnboarded: input.isOnboarded,
@@ -131,11 +147,10 @@ export const userRouter = createProtectedRouter()
 
       const recs = _.compact(users.map(calculateScore(currentUser)));
       recs.sort((a, b) => a.score - b.score);
-      const sortedUsers = _.compact(
-        recs.map((rec) =>
-          toPublicUser(users.find((user) => user.id === rec.id))
-        )
+      const sortedUsers = recs.map((rec) =>
+        users.find((user) => user.id === rec.id)
       );
+      return Promise.all(sortedUsers.map((user) => toPublicUser(user!)));
     },
   })
   // Returns the list of favorites for the curent user
@@ -158,6 +173,6 @@ export const userRouter = createProtectedRouter()
         });
       }
 
-      return favorites.map(toPublicUser);
+      return Promise.all(favorites.map(toPublicUser));
     },
   });
