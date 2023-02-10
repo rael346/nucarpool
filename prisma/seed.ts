@@ -198,10 +198,24 @@ const genRandomUsers = ({
   });
 };
 
+const addFavorites = async () => {
+  await prisma.user.update({
+    where: {
+      id: "cldwgki9300009k1g1tlwh4tj",
+    },
+    data: {
+      favorites: {
+        connect: [{ id: "0" }, { id: "1" }],
+      },
+    },
+  });
+};
+
 /**
  * Populates our database with fake data.
  */
 const main = async () => {
+  // addFavorites();
   await createUserData();
 };
 

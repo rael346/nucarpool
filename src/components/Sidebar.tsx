@@ -5,9 +5,10 @@ import Spinner from "./Spinner";
 import { Role, Status, User } from "@prisma/client";
 import mapboxgl, { Marker } from "mapbox-gl";
 import { min } from "lodash";
+import { PublicUser } from "../utils/publicUser";
 
 type ScrollableList = {
-  items: User[];
+  items: PublicUser[];
   idx: number;
 };
 
@@ -22,21 +23,21 @@ const Sidebar = ({
   favs,
   map,
 }: {
-  reccs: User[] | undefined;
-  favs: User[] | undefined;
+  reccs: PublicUser[] | undefined;
+  favs: PublicUser[] | undefined;
   map: mapboxgl.Map | undefined;
 }) => {
   const nurecs = requireNotUndefined(reccs);
   const nufavs = requireNotUndefined(favs);
 
-  const [curList, setCurList] = useState<User[]>(nurecs);
-  const userToElem = (user: User) => {
+  const [curList, setCurList] = useState<PublicUser[]>(nurecs);
+  const userToElem = (user: PublicUser) => {
     return (
       <div className="bg-stone-100 text-left px-2.5 py-2.5 rounded-xl m-3.5 align-center break-words">
         <p className="font-bold">{user.name}</p>
         <div className="flex flex-row space-x-4">
           <div className="w-1/2">
-            <p>{user.startLocation}</p>
+            <p>{user.startPOILocation}</p>
             <p>{user.companyName}</p>
             <button
               onClick={() => viewRoute(user)}
@@ -60,16 +61,16 @@ const Sidebar = ({
     );
   };
 
-  const viewRoute = (user: User) => {
+  const viewRoute = (user: PublicUser) => {
     if (map !== undefined) {
       clearMarkers();
 
       const startMarker = new mapboxgl.Marker({ color: "#2ae916" })
-        .setLngLat([user.startCoordLng, user.startCoordLat])
+        .setLngLat([user.startPOICoordLng, user.startPOICoordLat])
         .addTo(map);
 
       const endMarker = new mapboxgl.Marker({ color: "#f0220f" })
-        .setLngLat([user.companyCoordLng, user.companyCoordLat])
+        .setLngLat([user.companyPOICoordLng, user.companyPOICoordLat])
         .addTo(map);
 
       previousMarkers.push(startMarker);
@@ -77,12 +78,12 @@ const Sidebar = ({
 
       map.fitBounds([
         [
-          Math.min(user.startCoordLng, user.companyCoordLng) - 0.125,
-          Math.max(user.startCoordLat, user.companyCoordLat) + 0.05,
+          Math.min(user.startPOICoordLng, user.companyPOICoordLng) - 0.125,
+          Math.max(user.startPOICoordLat, user.companyPOICoordLat) + 0.05,
         ],
         [
-          Math.max(user.startCoordLng, user.companyCoordLng) + 0.05,
-          Math.min(user.startCoordLat, user.companyCoordLat) - 0.05,
+          Math.max(user.startPOICoordLng, user.companyPOICoordLng) + 0.05,
+          Math.min(user.startPOICoordLat, user.companyPOICoordLat) - 0.05,
         ],
       ]);
     }
@@ -128,7 +129,7 @@ const Sidebar = ({
   );
 };
 
-const requireNotUndefined = (lst: User[] | undefined) => {
+const requireNotUndefined = (lst: PublicUser[] | undefined) => {
   if (lst == undefined) {
     return [];
   }

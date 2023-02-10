@@ -17,33 +17,6 @@ export const userRouter = createProtectedRouter()
       const id = ctx.session.user?.id;
       const user = await ctx.prisma.user.findUnique({
         where: { id },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-          role: true,
-          status: true,
-          seatAvail: true,
-          companyName: true,
-          companyAddress: true,
-          companyCoordLng: true,
-          companyCoordLat: true,
-          startCoordLng: true,
-          startCoordLat: true,
-          startLocation: true,
-          companyPOIAddress: true,
-          companyPOICoordLng: true,
-          companyPOICoordLat: true,
-          startPOICoordLng: true,
-          startPOICoordLat: true,
-          startPOILocation: true,
-          preferredName: true,
-          pronouns: true,
-          daysWorking: true,
-          startTime: true,
-          endTime: true,
-        },
       });
 
       // throws TRPCError if no user with ID exists
