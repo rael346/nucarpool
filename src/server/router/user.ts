@@ -148,4 +148,24 @@ export const userRouter = createProtectedRouter()
 
       return Promise.all(favorites.map(toPublicUser));
     },
+  })
+  .mutation("edit", {
+    input: z.object({
+      userId: z.string(),
+      favoriteId: z.string(),
+      add: z.boolean(),
+    }),
+
+    async resolve({ ctx, input }) {
+      await ctx.prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          favorites: {
+            [input.add ? "connect" : "disconnect"]: { id: input.favoriteId },
+          },
+        },
+      });
+    },
   });
