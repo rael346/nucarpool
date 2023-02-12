@@ -188,6 +188,7 @@ const Profile: NextPage = () => {
       companyAddress: userInfo.companyAddress,
       companyCoordLng: userInfo.companyCoordLng!,
       companyCoordLat: userInfo.companyCoordLat!,
+      startLocation: userInfo.startLocation,
       startCoordLng: userInfo.startCoordLng!,
       startCoordLat: userInfo.startCoordLat!,
       isOnboarded: true,
