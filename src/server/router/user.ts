@@ -7,6 +7,7 @@ import { Status } from "@prisma/client";
 import { Feature, FeatureCollection } from "geojson";
 import calculateScore, { Recommendation } from "../../utils/recommendation";
 import _ from "lodash";
+import { FaTruckLoading } from "react-icons/fa";
 
 // user router to get information about or edit users
 export const userRouter = createProtectedRouter()
@@ -36,6 +37,8 @@ export const userRouter = createProtectedRouter()
           daysWorking: true,
           startTime: true,
           endTime: true,
+          favoritedBy: true,
+          favorites: true,
         },
       });
 
@@ -135,7 +138,7 @@ export const userRouter = createProtectedRouter()
       return sortedUsers;
     },
   })
-  // Returns the list of favorites for the curent user
+  // Returns the list of favorited user ids for the curent user
   .query("favorites", {
     async resolve({ ctx }) {
       const id = ctx.session.user?.id;
@@ -154,6 +157,10 @@ export const userRouter = createProtectedRouter()
         });
       }
 
-      return favorites;
+      const favArr: number[] = favorites.favorites.map((User: User): number =>
+        Number(User.id)
+      );
+
+      return favArr;
     },
   });
