@@ -1,11 +1,10 @@
 import Rating from "@mui/material/Rating/Rating";
 import dayjs from "dayjs";
 import mapboxgl from "mapbox-gl";
-import { User } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { PublicUser } from "../utils/types";
 
 interface UserCardProps {
-  user: User;
+  user: PublicUser;
   inputProps?: {
     map: mapboxgl.Map;
     previousMarkers: mapboxgl.Marker[];
@@ -57,17 +56,17 @@ export const UserCard = (props: UserCardProps): JSX.Element => {
     return <div className="flex border-l border-black h-min">{boxes}</div>;
   };
 
-  const onViewRouteClick = (user: User) => {
+  const onViewRouteClick = (user: PublicUser) => {
     if (props.inputProps) {
       if (props.inputProps.map !== undefined) {
         props.inputProps.clearMarkers();
 
         const startMarker = new mapboxgl.Marker({ color: "#2ae916" })
-          .setLngLat([props.user.startCoordLng, user.startCoordLat])
+          .setLngLat([props.user.startPOICoordLng, user.startPOICoordLat])
           .addTo(props.inputProps.map);
 
         const endMarker = new mapboxgl.Marker({ color: "#f0220f" })
-          .setLngLat([user.companyCoordLng, user.companyCoordLat])
+          .setLngLat([user.companyPOICoordLng, user.companyPOICoordLat])
           .addTo(props.inputProps.map);
 
         props.inputProps.previousMarkers.push(startMarker);
@@ -75,12 +74,12 @@ export const UserCard = (props: UserCardProps): JSX.Element => {
 
         props.inputProps.map.fitBounds([
           [
-            Math.min(user.startCoordLng, user.companyCoordLng) - 0.125,
-            Math.max(user.startCoordLat, user.companyCoordLat) + 0.05,
+            Math.min(user.startPOICoordLng, user.companyPOICoordLng) - 0.125,
+            Math.max(user.startPOICoordLat, user.companyPOICoordLat) + 0.05,
           ],
           [
-            Math.max(user.startCoordLng, user.companyCoordLng) + 0.05,
-            Math.min(user.startCoordLat, user.companyCoordLat) - 0.05,
+            Math.max(user.startPOICoordLng, user.companyPOICoordLng) + 0.05,
+            Math.min(user.startPOICoordLat, user.companyPOICoordLat) - 0.05,
           ],
         ]);
       }
@@ -107,7 +106,7 @@ export const UserCard = (props: UserCardProps): JSX.Element => {
         <Rating name="" size="large" max={1} />
       </div>
       {/* second row */}
-      <p className="font-semibold">{props.user.startLocation}</p>
+      <p className="font-semibold">{props.user.startPOILocation}</p>
       {/* third row */}
       <div className="w-full flex gap-4 items-center">
         {DaysWorkingDisplay(props.user.daysWorking)}

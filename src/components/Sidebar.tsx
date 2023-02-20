@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Role, Status, User } from "@prisma/client";
-import mapboxgl, { Marker } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import { UserCard } from "./UserCard";
+import { PublicUser } from "../utils/types";
 
 /**
  * TODO:
@@ -20,11 +20,11 @@ const Sidebar = ({
   favs,
   map,
 }: {
-  reccs: User[];
-  favs: User[];
+  reccs: PublicUser[];
+  favs: PublicUser[];
   map: mapboxgl.Map;
 }) => {
-  const [curList, setCurList] = useState<User[]>(reccs ?? []);
+  const [curList, setCurList] = useState<PublicUser[]>(reccs ?? []);
 
   useEffect(() => {
     setCurList(reccs ?? []);
@@ -63,7 +63,7 @@ const Sidebar = ({
         </div>
       </div>
       <div id="scrollableDiv" className="overflow-auto">
-        {curList.map((user: User) => (
+        {curList.map((user: PublicUser) => (
           <UserCard
             user={user}
             key={user.id}
