@@ -169,22 +169,20 @@ export const generateUser = ({
     throw new Error("Given an invalid string for daysWorking");
   }
 
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
   const [startHours, startMinutes] = startTime
     .split(":")
     .map((s) => _.toInteger(s));
-
-  dayjs.extend(utc);
-  dayjs.extend(timezone);
-
   const startDate = dayjs
-    .tz(
-      `2022-11-01 ${startHours}:${startMinutes}00`,
-      "America/New_York"
-    )
+    .tz(`2022-11-01 ${startHours}:${startMinutes}00`, "UTC")
     .toDate();
+  console.log(startDate);
+  console.log("hello");
+
   const [endHours, endMinutes] = endTime.split(":").map((s) => _.toInteger(s));
   const endDate = dayjs
-    .tz(`2022-11-01 ${endHours}:${endMinutes}00`, "America/New_York")
+    .tz(`2022-11-01 ${endHours}:${endMinutes}00`, "UTC")
     .toDate();
 
   const updated_obj = {
