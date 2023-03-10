@@ -1,27 +1,13 @@
 import { Combobox, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Feature } from "geojson";
-import _, { debounce, values } from "lodash";
-import { GetServerSidePropsContext, NextPage } from "next";
+import _, { debounce } from "lodash";
+import { NextPage } from "next";
 import { useRouter } from "next/router";
-import {
-  Fragment,
-  JSXElementConstructor,
-  ReactElement,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  Controller,
-  Field,
-  FieldError,
-  NestedValue,
-  useForm,
-} from "react-hook-form";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
-import { array, z } from "zod";
+import { z } from "zod";
 import { trpc } from "../utils/trpc";
 import { Role, Status } from "@prisma/client";
 import { TextField } from "../components/TextField";
@@ -29,7 +15,7 @@ import Radio from "../components/Radio";
 import useSearch from "../utils/search";
 import Checkbox from "@mui/material/Checkbox";
 import DayBox from "../components/DayBox";
-import { Tooltip, Icon, TextFieldProps } from "@mui/material";
+import { Tooltip, Icon } from "@mui/material";
 import { MdHelp } from "react-icons/md";
 import {
   BottomProfileSection,
@@ -49,6 +35,7 @@ import {
   ProfileHeaderNoMB,
 } from "../styles/profile";
 import ControlledTimePicker from "../components/ControlledTimePicker";
+import { CarpoolAddress, CarpoolFeature } from "../utils/types";
 
 // Inputs to the onboarding form.
 export type OnboardingFormInputs = {
@@ -60,8 +47,8 @@ export type OnboardingFormInputs = {
   preferredName: string;
   pronouns: string;
   daysWorking: boolean[];
-  startTime?: Date;
-  endTime?: Date;
+  startTime: Date | null;
+  endTime: Date | null;
   timeDiffers: boolean;
   bio: string;
 };
@@ -108,8 +95,7 @@ const Profile: NextPage = () => {
     formState: { errors },
     watch,
     handleSubmit,
-    setValue,
-    clearErrors,
+    reset,
     control,
   } = useForm<OnboardingFormInputs>({
     mode: "onSubmit",
@@ -129,30 +115,72 @@ const Profile: NextPage = () => {
     },
     resolver: zodResolver(onboardSchema),
   });
+  const { data: user } = trpc.useQuery(["user.me"], { refetchOnMount: true });
 
-  const [suggestions, setSuggestions] = useState<Feature[]>([]);
-  const [selected, setSelected] = useState({ place_name: "" });
-  const [startAddressSuggestions, setStartAddressSuggestions] = useState<
-    Feature[]
+  const [companyAddressSuggestions, setCompanyAddressSuggestions] = useState<
+    CarpoolFeature[]
   >([]);
-  const [startAddressSelected, setStartAddressSelected] = useState({
-    place_name: "",
-  });
+  const [startAddressSuggestions, setStartAddressSuggestions] = useState<
+    CarpoolFeature[]
+  >([]);
+
+  const [companyAddressSelected, setCompanyAddressSelected] =
+    useState<CarpoolAddress>({
+      place_name: "",
+      center: [0, 0],
+    });
+  const [startAddressSelected, setStartAddressSelected] =
+    useState<CarpoolAddress>({
+      place_name: "",
+      center: [0, 0],
+    });
+
   const [companyAddress, setCompanyAddress] = useState("");
   const updateCompanyAddress = useMemo(
     () => debounce(setCompanyAddress, 1000),
     []
   );
+
   const [startingAddress, setStartingAddress] = useState("");
   const updateStartingAddress = useMemo(
     () => debounce(setStartingAddress, 1000),
     []
   );
 
+  console.log(startAddressSuggestions);
+
+  useEffect(() => {
+    if (!user) return;
+
+    setStartAddressSelected({
+      place_name: user.startAddress,
+      center: [user.startCoordLng, user.startCoordLat],
+    });
+    setCompanyAddressSelected({
+      place_name: user.companyAddress,
+      center: [user.companyCoordLng, user.companyCoordLat],
+    });
+
+    reset({
+      role: user.role,
+      seatAvail: user.seatAvail,
+      companyName: user.companyName,
+      companyAddress: user.companyAddress,
+      startAddress: user.startAddress,
+      preferredName: user.preferredName,
+      pronouns: user.pronouns,
+      daysWorking: user.daysWorking.split(",").map((bit) => bit === "1"),
+      startTime: user.startTime,
+      endTime: user.endTime,
+      timeDiffers: false,
+      bio: user.bio,
+    });
+  }, [user]);
+
   useSearch({
     value: companyAddress,
     type: "address%2Cpostcode",
-    setFunc: setSuggestions,
+    setFunc: setCompanyAddressSuggestions,
   });
 
   useSearch({
@@ -171,8 +199,8 @@ const Profile: NextPage = () => {
   });
 
   const onSubmit = async (values: OnboardingFormInputs) => {
-    const coord: number[] = (selected as any).center;
-    const startCoord: number[] = (startAddressSelected as any).center;
+    const coord: number[] = companyAddressSelected.center;
+    const startCoord: number[] = startAddressSelected.center;
     const userInfo = {
       ...values,
       companyCoordLng: coord[0],
@@ -236,7 +264,7 @@ const Profile: NextPage = () => {
                       className={`w-full`}
                       as="div"
                       value={startAddressSelected}
-                      onChange={(val) => {
+                      onChange={(val: CarpoolFeature) => {
                         setStartAddressSelected(val);
                         fieldProps.onChange(val.place_name);
                       }}
@@ -248,13 +276,16 @@ const Profile: NextPage = () => {
                             ? "border-northeastern-red"
                             : "border-black"
                         }`}
-                        displayValue={(feat: any) =>
+                        displayValue={(feat: CarpoolAddress) =>
                           feat.place_name ? feat.place_name : ""
                         }
                         type="text"
                         onChange={(e) => {
                           if (e.target.value === "") {
-                            setStartAddressSelected({ place_name: "" });
+                            setStartAddressSelected({
+                              place_name: "",
+                              center: [0, 0],
+                            });
                             fieldProps.onChange("");
                           } else {
                             updateStartingAddress(e.target.value);
@@ -273,7 +304,7 @@ const Profile: NextPage = () => {
                               Nothing found.
                             </div>
                           ) : (
-                            startAddressSuggestions.map((feat: any) => (
+                            startAddressSuggestions.map((feat) => (
                               <Combobox.Option
                                 key={feat.id}
                                 className={({ active }) =>
@@ -329,9 +360,9 @@ const Profile: NextPage = () => {
                     <Combobox
                       className={`w-full`}
                       as="div"
-                      value={selected}
-                      onChange={(val) => {
-                        setSelected(val);
+                      value={companyAddressSelected}
+                      onChange={(val: CarpoolFeature) => {
+                        setCompanyAddressSelected(val);
                         fieldProps.onChange(val.place_name);
                       }}
                       ref={ref}
@@ -342,13 +373,16 @@ const Profile: NextPage = () => {
                             ? "border-northeastern-red"
                             : "border-black"
                         }`}
-                        displayValue={(feat: any) =>
+                        displayValue={(feat: CarpoolAddress) =>
                           feat.place_name ? feat.place_name : ""
                         }
                         type="text"
                         onChange={(e) => {
                           if (e.target.value === "") {
-                            setSelected({ place_name: "" });
+                            setCompanyAddressSelected({
+                              place_name: "",
+                              center: [0, 0],
+                            });
                             fieldProps.onChange("");
                           } else {
                             updateCompanyAddress(e.target.value);
@@ -362,12 +396,12 @@ const Profile: NextPage = () => {
                         leaveTo="opacity-0"
                       >
                         <Combobox.Options className="w-full rounded-md bg-white text-base shadow-lg focus:outline-none ">
-                          {suggestions.length === 0 ? (
+                          {companyAddressSuggestions.length === 0 ? (
                             <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                               Nothing found.
                             </div>
                           ) : (
-                            suggestions.map((feat: any) => (
+                            companyAddressSuggestions.map((feat) => (
                               <Combobox.Option
                                 key={feat.id}
                                 className={({ active }) =>
@@ -437,16 +471,29 @@ const Profile: NextPage = () => {
                 <div className="my-4">
                   <div className="border-l-2 border-l-black">
                     {daysOfWeek.map((day, index) => (
-                      <Checkbox
+                      <Controller
                         key={day + index.toString()}
-                        sx={{
-                          input: { width: 1, height: 1 },
-                          padding: 0,
-                        }}
-                        {...register(`daysWorking.${index}`)}
-                        checkedIcon={<DayBox day={day} isSelected={true} />}
-                        icon={<DayBox day={day} isSelected={false} />}
-                        defaultChecked={false}
+                        name={`daysWorking.${index}`}
+                        control={control}
+                        render={({
+                          field: { onChange, value },
+                          formState: { defaultValues },
+                        }) => (
+                          <Checkbox
+                            key={day + index.toString()}
+                            sx={{
+                              input: { width: 1, height: 1 },
+                              padding: 0,
+                            }}
+                            checked={value}
+                            onChange={onChange}
+                            checkedIcon={<DayBox day={day} isSelected={true} />}
+                            icon={<DayBox day={day} isSelected={false} />}
+                            defaultChecked={
+                              !!defaultValues?.daysWorking ? true : false
+                            }
+                          />
+                        )}
                       />
                     ))}
                   </div>
