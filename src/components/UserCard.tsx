@@ -128,13 +128,9 @@ export const UserCard = (props: UserCardProps): JSX.Element => {
       <div className="flex justify-between">
         {/* top row */}
         <div className="flex">
-          <div className="flex text-lg">
-            <p className="font-semibold border-r-2 pr-2 border-r-black">
-              {props.userToConnectTo.name}
-            </p>
-            <p className="font-light pl-2">
-              {props.userToConnectTo.companyName}
-            </p>
+          <div className="text-lg">
+            <p className="font-semibold">{props.userToConnectTo.name}</p>
+            <p className="font-light">{props.userToConnectTo.companyName}</p>
           </div>
         </div>
         <Rating name="" size="large" max={1} />
@@ -156,12 +152,12 @@ export const UserCard = (props: UserCardProps): JSX.Element => {
       {/* fourth row */}
       <div className="w-full m-0 flex justify-between align-middle">
         <div className="font-normal text-sm flex">
-          <p>Start: </p>
+          <p className="pr-1">Start:</p>
           <p className="font-semibold">
             {dayjs.tz(props.userToConnectTo.startTime, "UTC").format("h:mm")} am
           </p>
           <p className="font-semibold px-2"> | </p>
-          <p>End: </p>
+          <p className="pr-1">End:</p>
           <p className="font-semibold">
             {dayjs.tz(props.userToConnectTo.endTime, "UTC").format("h:mm")} pm
           </p>
