@@ -14,11 +14,9 @@ const addUserLocation = (map: Map, user: User) => {
       properties: {},
     },
   });
-
   map.addImage("pulsing-dot", new PulsingDot(100, map), {
     pixelRatio: 2,
   });
-
   map.addLayer({
     id: "layer-with-pulsing-dot",
     type: "symbol",

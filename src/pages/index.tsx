@@ -17,17 +17,25 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { PublicUser } from "../utils/types";
 import ConnectModal from "../components/ConnectModal";
+import { toast } from "react-toastify";
 
 mapboxgl.accessToken = browserEnv.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
 const Home: NextPage<any> = () => {
+  const utils = trpc.useContext();
   const { data: geoJsonUsers, isLoading: isLoadingGeoJsonUsers } =
     trpc.useQuery(["mapbox.geoJsonUsersList"]);
   const { data: user, isLoading: isLoadingUser } = trpc.useQuery(["user.me"]);
   const { data: recommendations } = trpc.useQuery(["user.recommendations"]);
-  // const { data: favorites  = trpc.useQuery(["user.favorites"]);
-  // Uncomment the above line and delete the below line for the final build
-  const favorites = undefined;
+  const { data: favorites } = trpc.useQuery(["user.favorites"]);
+  const { mutate: mutateFavorites } = trpc.useMutation("user.edit-favorites", {
+    onError: (error) => {
+      toast.error(`Something went wrong: ${error.message}`);
+    },
+    onSuccess() {
+      utils.invalidateQueries(["user.favorites"]);
+    },
+  });
 
   const [mapState, setMapState] = useState<mapboxgl.Map>();
 
@@ -61,6 +69,16 @@ const Home: NextPage<any> = () => {
       setMapState(newMap);
     }
   }, [user, geoJsonUsers]);
+
+  const handleFavorite = (favoriteId: string, add: boolean) => {
+    if (!user) return;
+    mutateFavorites({
+      userId: user.id,
+      favoriteId,
+      add,
+    });
+  };
+
   return (
     <>
       <Head>
@@ -78,6 +96,7 @@ const Home: NextPage<any> = () => {
                 favs={favorites ?? []}
                 map={mapState}
                 handleConnect={handleConnect}
+                handleFavorite={handleFavorite}
               />
             )}
           </div>

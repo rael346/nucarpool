@@ -21,6 +21,7 @@ interface SideBarProps {
   favs: PublicUser[];
   map: mapboxgl.Map;
   handleConnect: (modalUser: PublicUser) => void;
+  handleFavorite: (otherUser: string, add: boolean) => void;
 }
 
 const Sidebar = (props: SideBarProps) => {
@@ -29,6 +30,8 @@ const Sidebar = (props: SideBarProps) => {
   useEffect(() => {
     setCurList(props.reccs ?? []);
   }, [props.reccs]);
+
+  const favIds = props.favs.map((fav) => fav.id);
 
   return (
     <div className="flex flex-col px-5 flex-shrink-0 h-full z-10 text-left bg-white">
@@ -72,7 +75,9 @@ const Sidebar = (props: SideBarProps) => {
               previousMarkers: previousMarkers,
               clearMarkers: clearMarkers,
             }}
+            isFavorited={favIds.includes(otherUser.id)}
             handleConnect={props.handleConnect}
+            handleFavorite={(add) => props.handleFavorite(otherUser.id, add)}
           />
         ))}
       </div>

@@ -1,17 +1,16 @@
 import Rating from "@mui/material/Rating/Rating";
 import dayjs from "dayjs";
 import mapboxgl from "mapbox-gl";
-import { useState } from "react";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { PublicUser, User } from "../utils/types";
-import ConnectModal from "./ConnectModal";
-import CustomPopUp from "./CustomPopUp";
 
 interface UserCardProps {
   // represents the other user 'I' am trying to connect to.
   userToConnectTo: PublicUser;
   handleConnect: (modalUser: PublicUser) => void;
+  isFavorited: boolean;
+  handleFavorite: (add: boolean) => void;
   inputProps?: {
     map: mapboxgl.Map;
     previousMarkers: mapboxgl.Marker[];
@@ -133,7 +132,13 @@ export const UserCard = (props: UserCardProps): JSX.Element => {
             <p className="font-light">{props.userToConnectTo.companyName}</p>
           </div>
         </div>
-        <Rating name="" size="large" max={1} />
+        <Rating
+          name=""
+          size="large"
+          onChange={(_, value) => props.handleFavorite(!!value)}
+          value={props.isFavorited ? 1 : 0}
+          max={1}
+        />
       </div>
       {/* second row */}
       <p className="font-semibold">{props.userToConnectTo.startPOILocation}</p>
