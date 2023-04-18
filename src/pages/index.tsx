@@ -14,10 +14,14 @@ import DropDownMenu from "../components/DropDownMenu";
 import { browserEnv } from "../utils/env/browser";
 import ProtectedPage from "../utils/auth";
 import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+import Header, { HeaderOptions } from "../components/Header";
 import { PublicUser } from "../utils/types";
 import ConnectModal from "../components/ConnectModal";
 import { toast } from "react-toastify";
+import ExploreSidebar from "../components/ExploreSidebar";
+import RequestSidebar from "../components/RequestSidebar";
+import SentRequestModal from "../components/SentRequestModal";
+import ReceivedRequestModal from "../components/ReceivedRequestModal";
 
 mapboxgl.accessToken = browserEnv.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
@@ -44,8 +48,17 @@ const Home: NextPage<any> = () => {
   const [mapState, setMapState] = useState<mapboxgl.Map>();
 
   const [modalUser, setModalUser] = useState<PublicUser | null>(null);
+  const [sidebarState, setSidebarState] = useState<HeaderOptions>("explore");
 
   const handleConnect = (userToConnectTo: PublicUser) => {
+    setModalUser(userToConnectTo);
+  };
+
+  const handleSentRequests = (userToConnectTo: PublicUser) => {
+    setModalUser(userToConnectTo);
+  };
+
+  const handleReceivedRequests = (userToConnectTo: PublicUser) => {
     setModalUser(userToConnectTo);
   };
 
@@ -80,27 +93,48 @@ const Home: NextPage<any> = () => {
     });
   };
 
+  const renderSidebar = () => {
+    if (mapState && user) {
+      if (sidebarState == "explore") {
+        return (
+          <ExploreSidebar
+            currentUser={user}
+            reccs={recommendations ?? []}
+            favs={favorites ?? []}
+            map={mapState}
+            handleConnect={handleConnect}
+            handleFavorite={handleFavorite}
+          />
+        );
+      } else {
+        return (
+          <RequestSidebar
+            currentUser={user}
+            sent={getPublicUserArray("Sent Users")}
+            received={getPublicUserArray("Received Users")}
+            favs={favorites ?? []}
+            map={mapState}
+            handleSent={handleSentRequests}
+            handleReceived={handleReceivedRequests}
+            handleFavorite={handleFavorite}
+          />
+        );
+      }
+    }
+  };
+
   return (
     <>
       <Head>
         <title>Home</title>
       </Head>
       <div className="max-h-screen w-full h-full m-0">
-        <Header />
+        <Header
+          data={{ sidebarValue: sidebarState, setSidebar: setSidebarState }}
+        />
         {/* <ProfileModal userInfo={userInfo!} user={user!}  /> */}
         <div className="flex flex-auto h-[91.5%]">
-          <div className="w-96">
-            {mapState && user && (
-              <Sidebar
-                currentUser={user}
-                reccs={recommendations ?? []}
-                favs={favorites ?? []}
-                map={mapState}
-                handleConnect={handleConnect}
-                handleFavorite={handleFavorite}
-              />
-            )}
-          </div>
+          <div className="w-96">{mapState && user && renderSidebar()}</div>
 
           <DropDownMenu />
           <button
@@ -123,11 +157,68 @@ const Home: NextPage<any> = () => {
                 }}
               />
             )}
+            {user && modalUser && (
+              <SentRequestModal
+                currentUser={user}
+                userToConnectTo={modalUser}
+                closeModal={() => {
+                  setModalUser(null);
+                }}
+              />
+            )}
+            {user && modalUser && (
+              <ReceivedRequestModal
+                currentUser={user}
+                userToConnectTo={modalUser}
+                closeModal={() => {
+                  setModalUser(null);
+                }}
+              />
+            )}
           </div>
         </div>
       </div>
     </>
   );
+};
+
+// TEMPORARY TESTING CODE
+const getPublicUserArray = (name: string): PublicUser[] => {
+  return new Array(50).fill(undefined).map((_, index) => {
+    const user: PublicUser = {
+      id: `${index}`,
+      name: `${name} ${index}`,
+      email: `${name} ${index}@yahoo.com`,
+      bio: "Howdy!",
+      preferredName: `${name} ${index}`,
+      pronouns: "they",
+      role: "RIDER",
+      status: "ACTIVE",
+      companyName: "Sandbox",
+      startPOILocation: "Mission Hill",
+      startPOICoordLng: 42,
+      startPOICoordLat: -71,
+      companyPOIAddress: "Sandbox Corp",
+      companyPOICoordLng: 42.1,
+      companyPOICoordLat: -71.1,
+      daysWorking: new Array(7)
+        .fill(undefined)
+        .map((_, ind) => (Math.random() < 0.5 ? "0" : "1"))
+        .join(","),
+      image: null,
+      seatAvail: 0,
+      startTime: new Date("December 17, 1995 16:00:00"),
+      endTime: new Date("December 17, 1995 00:24:00"),
+    };
+    if (Math.random() < 0.5) {
+      return {
+        ...user,
+        role: "DRIVER",
+        seatAvail: Math.ceil(6 * Math.random()),
+      };
+    }
+    return user;
+  });
 };
 
 export default ProtectedPage(Home);
