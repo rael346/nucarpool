@@ -46,9 +46,7 @@ const Home: NextPage<any> = () => {
   const [mapState, setMapState] = useState<mapboxgl.Map>();
 
   const [modalUser, setModalUser] = useState<PublicUser | null>(null);
-  const [modalType, setModalType] = useState<"connect" | "sent" | "received">(
-    "connect"
-  );
+  const [modalType, setModalType] = useState<string>("connect");
   const [sidebarState, setSidebarState] = useState<HeaderOptions>("explore");
 
   const handleConnect = (userToConnectTo: PublicUser) => {
