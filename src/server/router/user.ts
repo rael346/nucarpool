@@ -32,27 +32,6 @@ export const userRouter = createProtectedRouter()
       return user;
     },
   })
-  .query("else", {
-    input: z.object({
-      id: z.string(),
-    }),
-    async resolve({ ctx, input }) {
-      const id = input.id;
-      const user = await ctx.prisma.user.findUnique({
-        where: { id },
-      });
-
-      // throws TRPCError if no user with ID exists
-      if (!user) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: `No profile with id '${id}'`,
-        });
-      }
-
-      return convertToPublic(user);
-    },
-  })
   // edits a user
   .mutation("edit", {
     input: z.object({

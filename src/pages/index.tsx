@@ -35,9 +35,6 @@ const Home: NextPage<any> = () => {
   const { data: recommendations } = trpc.useQuery(["user.recommendations.me"]);
   const { data: favorites } = trpc.useQuery(["user.favorites.me"]);
   const { data: requests } = trpc.useQuery(["user.requests.me"]);
-  const fromRequestIds =
-    requests?.from.map((request) => request.fromUserId) ?? [];
-  const toRequestIds = requests?.to.map((request) => request.toUserId) ?? [];
   const { mutate: mutateFavorites } = trpc.useMutation("user.favorites.edit", {
     onError: (error) => {
       toast.error(`Something went wrong: ${error.message}`);
@@ -100,11 +97,6 @@ const Home: NextPage<any> = () => {
     setModalType("received");
   };
 
-  const convertToUser = (id: string) => {
-    const { data: curUser } = trpc.useQuery(["user.else", { id: id }]);
-    return curUser;
-  };
-
   useEffect(() => {
     if (mapState === undefined && user && geoJsonUsers) {
       const newMap = new mapboxgl.Map({
@@ -153,12 +145,8 @@ const Home: NextPage<any> = () => {
         return (
           <RequestSidebar
             currentUser={user}
-            sent={toRequestIds
-              .map(convertToUser)
-              .filter((user): user is PublicUser => !!user)}
-            received={fromRequestIds
-              .map(convertToUser)
-              .filter((user): user is PublicUser => !!user)}
+            sent={requests?.from.map((req) => req.toUser!) ?? []}
+            received={requests?.to.map((req) => req.fromUser!) ?? []}
             favs={favorites ?? []}
             map={mapState}
             handleSent={handleSentRequests}
