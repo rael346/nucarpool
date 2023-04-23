@@ -11,9 +11,8 @@ import { trpc } from "../utils/trpc";
 import DropDownMenu from "../components/DropDownMenu";
 import { browserEnv } from "../utils/env/browser";
 import ProtectedPage from "../utils/auth";
-import Sidebar from "../components/Sidebar";
 import Header, { HeaderOptions } from "../components/Header";
-import { PublicUser } from "../utils/types";
+import { PublicUser, User } from "../utils/types";
 import ConnectModal from "../components/ConnectModal";
 import { toast } from "react-toastify";
 import ExploreSidebar from "../components/ExploreSidebar";
@@ -32,8 +31,13 @@ const Home: NextPage<any> = () => {
     isLoading: isLoadingUser,
     refetch,
   } = trpc.useQuery(["user.me"]);
+
   const { data: recommendations } = trpc.useQuery(["user.recommendations.me"]);
   const { data: favorites } = trpc.useQuery(["user.favorites.me"]);
+  const { data: requests } = trpc.useQuery(["user.requests.me"]);
+  const fromRequestIds =
+    requests?.from.map((request) => request.fromUserId) ?? [];
+  const toRequestIds = requests?.to.map((request) => request.toUserId) ?? [];
   const { mutate: mutateFavorites } = trpc.useMutation("user.favorites.edit", {
     onError: (error) => {
       toast.error(`Something went wrong: ${error.message}`);
@@ -54,6 +58,38 @@ const Home: NextPage<any> = () => {
     setModalType("connect");
   };
 
+  const { mutate: mutateRequests } = trpc.useMutation("user.requests.create", {
+    onError: (error) => {
+      toast.error(`Something went wrong: ${error.message}`);
+    },
+    onSuccess() {
+      utils.invalidateQueries(["user.requests.me"]);
+    },
+  });
+
+  const handleEmailConnect = (curUser: User, toUser: PublicUser) => {
+    connectEmail(toUser.email);
+    mutateRequests({
+      fromId: curUser.id,
+      toId: toUser.id,
+      message: "Not sure if we need this",
+    });
+  };
+  const connectEmail = async (email: string | null) => {
+    const msg = {
+      to: email, // Replace with your recipient
+      from: "devashishsood9@gmail.com", // Replace with your verified sender
+      subject: "New Contact Message",
+      text: `Dior Dior`,
+    };
+
+    const result = await fetch(`/api/sendEmail`, {
+      method: "POST",
+      body: JSON.stringify(msg),
+    });
+    console.log(result);
+  };
+
   const handleSentRequests = (userToConnectTo: PublicUser) => {
     setModalUser(userToConnectTo);
     setModalType("sent");
@@ -62,6 +98,11 @@ const Home: NextPage<any> = () => {
   const handleReceivedRequests = (userToConnectTo: PublicUser) => {
     setModalUser(userToConnectTo);
     setModalType("received");
+  };
+
+  const convertToUser = (id: string) => {
+    const { data: curUser } = trpc.useQuery(["user.else", { id: id }]);
+    return curUser;
   };
 
   useEffect(() => {
@@ -112,8 +153,12 @@ const Home: NextPage<any> = () => {
         return (
           <RequestSidebar
             currentUser={user}
-            sent={getPublicUserArray("Sent Users")}
-            received={getPublicUserArray("Received Users")}
+            sent={toRequestIds
+              .map(convertToUser)
+              .filter((user): user is PublicUser => !!user)}
+            received={fromRequestIds
+              .map(convertToUser)
+              .filter((user): user is PublicUser => !!user)}
             favs={favorites ?? []}
             map={mapState}
             handleSent={handleSentRequests}
@@ -154,6 +199,7 @@ const Home: NextPage<any> = () => {
               <ConnectModal
                 currentUser={user}
                 userToConnectTo={modalUser}
+                handleEmailConect={() => handleEmailConnect(user, modalUser)}
                 closeModal={() => {
                   setModalUser(null);
                 }}
