@@ -46,18 +46,24 @@ const Home: NextPage<any> = () => {
   const [mapState, setMapState] = useState<mapboxgl.Map>();
 
   const [modalUser, setModalUser] = useState<PublicUser | null>(null);
+  const [modalType, setModalType] = useState<"connect" | "sent" | "received">(
+    "connect"
+  );
   const [sidebarState, setSidebarState] = useState<HeaderOptions>("explore");
 
   const handleConnect = (userToConnectTo: PublicUser) => {
     setModalUser(userToConnectTo);
+    setModalType("connect");
   };
 
   const handleSentRequests = (userToConnectTo: PublicUser) => {
     setModalUser(userToConnectTo);
+    setModalType("sent");
   };
 
   const handleReceivedRequests = (userToConnectTo: PublicUser) => {
     setModalUser(userToConnectTo);
+    setModalType("received");
   };
 
   useEffect(() => {
@@ -146,7 +152,7 @@ const Home: NextPage<any> = () => {
           {/* map wrapper */}
           <div className="relative flex-auto">
             <div id="map" className={"flex-auto w-full h-full"}></div>
-            {user && modalUser && (
+            {user && modalUser && modalType === "connect" && (
               <ConnectModal
                 currentUser={user}
                 userToConnectTo={modalUser}
@@ -155,7 +161,7 @@ const Home: NextPage<any> = () => {
                 }}
               />
             )}
-            {user && modalUser && (
+            {user && modalUser && modalType === "sent" && (
               <SentRequestModal
                 currentUser={user}
                 userToConnectTo={modalUser}
@@ -164,7 +170,7 @@ const Home: NextPage<any> = () => {
                 }}
               />
             )}
-            {user && modalUser && (
+            {user && modalUser && modalType === "received" && (
               <ReceivedRequestModal
                 currentUser={user}
                 userToConnectTo={modalUser}
