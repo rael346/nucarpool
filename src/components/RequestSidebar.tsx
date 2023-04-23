@@ -54,7 +54,7 @@ const RequestSidebar = (props: RequestSidebarProps) => {
             }
             onClick={() => {
               setCurList(props.sent ?? []);
-              setHandleManage("sent");
+              setHandleManage("received");
               clearMarkers();
             }}
           >
@@ -68,7 +68,7 @@ const RequestSidebar = (props: RequestSidebarProps) => {
             }
             onClick={() => {
               setCurList(props.received ?? []);
-              setHandleManage("received");
+              setHandleManage("sent");
               clearMarkers();
             }}
           >
