@@ -1,5 +1,7 @@
 # NU Carpool
 
+**NOTE**: This project has been acquired by [Sandbox at Northeastern](https://github.com/sandboxnu) 
+
 This is a web app for Northeastern University's students to assists them in finding groups for carpooling while on co-op.
 
 ![Home Page](./public/home.png "Home Page")
